@@ -23,20 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"123-prog.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
+<meta name="description" content="0x01information_schema数据库是注入常用的库，但如果被waf过滤的话，我们就需要寻找其他视图进行利用 比如mysql5.7新增的sys.schema_auto_increment_columns,sys数据库下的一个记录自增字段的信息的视图，记录了包括自增字段的表名，库名等等 我们通过这种方法可以查的也有缺陷，我们无法查到列名，除了自增的列名，其他列名无法通过这种方法查得，这时">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GY&#39;s Blog">
-<meta property="og:url" content="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:title" content="无列名注入">
+<meta property="og:url" content="https://123-prog.github.io/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/index.html">
 <meta property="og:site_name" content="GY&#39;s Blog">
+<meta property="og:description" content="0x01information_schema数据库是注入常用的库，但如果被waf过滤的话，我们就需要寻找其他视图进行利用 比如mysql5.7新增的sys.schema_auto_increment_columns,sys数据库下的一个记录自增字段的信息的视图，记录了包括自增字段的表名，库名等等 我们通过这种方法可以查的也有缺陷，我们无法查到列名，除了自增的列名，其他列名无法通过这种方法查得，这时">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/698788.png">
-<meta property="article:published_time" content="2021-01-14T03:51:00.000Z">
-<meta property="article:modified_time" content="2021-01-18T13:25:42.860Z">
+<meta property="article:published_time" content="2021-02-10T16:01:16.000Z">
+<meta property="article:modified_time" content="2021-02-10T16:02:03.766Z">
 <meta property="article:author" content="Guangyue">
+<meta property="article:tag" content="记录">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/698788.png">
 
 
-<link rel="canonical" href="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">
+<link rel="canonical" href="https://123-prog.github.io/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/">
 
 
 <script class="page-configurations">
@@ -48,7 +49,7 @@
     lang   : 'en'
   };
 </script>
-<title> | GY's Blog</title>
+<title>无列名注入 | GY's Blog</title>
   
 
 
@@ -143,7 +144,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -156,6 +157,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01"><span class="nav-number">1.</span> <span class="nav-text">0x01</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02"><span class="nav-number">2.</span> <span class="nav-text">0x02</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03"><span class="nav-number">3.</span> <span class="nav-text">0x03</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -215,7 +217,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar2.gif">
@@ -228,7 +230,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          无列名注入
         </h1>
 
         <div class="post-meta-container">
@@ -238,16 +240,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2021-01-14 11:51:00" itemprop="dateCreated datePublished" datetime="2021-01-14T11:51:00+08:00">2021-01-14</time>
+      <time title="Created: 2021-02-11 00:01:16 / Modified: 00:02:03" itemprop="dateCreated datePublished" datetime="2021-02-11T00:01:16+08:00">2021-02-11</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-01-18 21:25:42" itemprop="dateModified" datetime="2021-01-18T21:25:42+08:00">2021-01-18</time>
-      </span>
 
   
 </div>
@@ -259,7 +255,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><img src="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/698788.png"></p>
+        <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>information_schema数据库是注入常用的库，但如果被waf过滤的话，我们就需要寻找其他视图进行利用</p>
+<p>比如mysql5.7新增的sys.schema_auto_increment_columns,sys数据库下的一个记录自增字段的信息的视图，记录了包括自增字段的表名，库名等等</p>
+<p>我们通过这种方法可以查的也有缺陷，我们无法查到列名，除了自增的列名，其他列名无法通过这种方法查得，这时候要注入就要用到无列名注入</p>
+<h3 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h3><p>假如有一个有3个字段的表t1，我们只知道其中自增的id字段，其他不知道，这时候可以利用子查询的方法，不用列名就查出表里面的信息，有个前提，就是需要知道表的字段数，当然，不知道也可以猜嘛</p>
+<p>首先，我们利用联合查询先把表中数据查出</p>
+<p>select 1,2,3 union select * from t1;</p>
+<p>返回的数据如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+----+----------+------------+</span><br><span class="line">| 1  | 2        | 3          |</span><br><span class="line">+----+----------+------------+</span><br><span class="line">|  1 | 2        | 3          |</span><br><span class="line">|  1 | flag0    | ssss       |</span><br><span class="line">|  2 | flag1    | ssss      |</span><br><span class="line">|  3 | flag2    | sss     |</span><br><span class="line">| 4  | flag3    | sss     |</span><br><span class="line">+----+----------+------------+</span><br></pre></td></tr></table></figure>
+<p>然后查询其中的一列数据</p>
+<p>select a.1 from (select 1,2,3 union select * from t1)a</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+------------+</span><br><span class="line">| 1         |</span><br><span class="line">+------------+</span><br><span class="line">| 1      |</span><br><span class="line">| 1      |</span><br><span class="line">| 2      |</span><br><span class="line">| 3      |</span><br><span class="line">| 4      |</span><br><span class="line">+------------+</span><br></pre></td></tr></table></figure>
+<h3 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h3><p>可以用布尔法一个一个字符进行判断比较</p>
+<p>这种方法也得先知道表的字段数</p>
+<p>假如我们有一个flag表，一个id字段，另一个字段存放flag</p>
+<p>select * from flag limit 0,1;得到我们要查的表的数据的第一行</p>
+<p>select 1,’a’;构造比较目标，第一个1是id字段的值，第二个就是我们要比较得出的目标</p>
+<p>进行比较：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select 1,&#39;a&#39;)&gt;(select * from flag limit 0,1)</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">|    (select 1,&#39;a&#39;)&gt;(select * from flag limit 0,1)       |</span><br><span class="line">+---------------------------------------------------------+</span><br><span class="line">|                           0                             |</span><br><span class="line">+---------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<p>可以写脚本进行比较，也可以无列名得到数据</p>
 
     </div>
 
@@ -268,16 +282,19 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%B0%E5%BD%95/" rel="tag"># 记录</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2021/02/08/HGAME-week1-web%E9%83%A8%E5%88%86/" rel="prev" title="HGAME week1 web部分">
+                  <i class="fa fa-chevron-left"></i> HGAME week1 web部分
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/01/14/HCTF-2018-Warmup/" rel="next" title="HCTF 2018 Warmup">
-                  HCTF 2018 Warmup <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
