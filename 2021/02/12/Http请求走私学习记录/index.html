@@ -31,7 +31,7 @@
 <meta property="og:description" content="HTTP smuggling 请求夹带攻击（请求走私）学习记录网站处理从一个或多个用户接收的HTTP请求序列有一定的方式，利用请求夹带技术，我们可以去干扰网站处理请求">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-02-12T09:29:20.000Z">
-<meta property="article:modified_time" content="2021-02-12T09:30:12.284Z">
+<meta property="article:modified_time" content="2021-02-12T12:15:12.525Z">
 <meta property="article:author" content="Guangyue">
 <meta property="article:tag" content="学习记录">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-02-12 17:29:20 / Modified: 17:30:12" itemprop="dateCreated datePublished" datetime="2021-02-12T17:29:20+08:00">2021-02-12</time>
+      <time title="Created: 2021-02-12 17:29:20 / Modified: 20:15:12" itemprop="dateCreated datePublished" datetime="2021-02-12T17:29:20+08:00">2021-02-12</time>
     </span>
 
   
@@ -288,9 +288,9 @@
 <p>后端服务器处理Content-Length标头并确定请求主体长度为3个字节，直到8之后的行的开头。以SMUGGLED开头的以下字节未经处理，后端服务器将这些视为序列中下一个请求的开头。</p>
 <p>TE.TE:混淆TE头</p>
 <p>前端和后端服务器都支持Transfer-Encoding标头，但是可以通过以某种方式模糊标头来诱导其中一个服务器不处理它。</p>
-<p>有可能无休止地混淆Transfer-Encoding标头。例如：</p>
+<p>有很多混淆Transfer-Encoding标头的方法。例如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: xchunked</span><br><span class="line"></span><br><span class="line">Transfer-Encoding : chunked</span><br><span class="line"></span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br><span class="line"></span><br><span class="line">Transfer-Encoding:[tab]chunked</span><br><span class="line"></span><br><span class="line">[space]Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">X: X[\n]Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">Transfer-Encoding</span><br><span class="line">: chunked</span><br></pre></td></tr></table></figure>
-<p>要发现TE.TE漏洞，有必要找到Transfer-Encoding标头的一些变体，以便只有一个前端或后端服务器处理它，而另一个服务器忽略它。</p>
+<p>要发现TE.TE漏洞，有必要找到Transfer-Encoding标头的一些变体，以便只有一个前端或后端服务器处理它，而另一个服务器忽略它，转而使用CL，就跟前面两种处理方法利用方式一致了。</p>
 <h3 id="检测请求走私"><a href="#检测请求走私" class="headerlink" title="检测请求走私"></a>检测请求走私</h3><p>直接使用模糊测试，针对大流量的目标，极易受到干扰，攻击响应会被其他用户获得，从而无法得知漏洞是否存在</p>
 <p>所以我们可以通过另一种方式，使用一系列的消息，消息让后端挂起并且让连接超时。</p>
 <p>如，发送以下请求</p>
