@@ -23,15 +23,15 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"123-prog.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="0x01 php变量解析漏洞起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作 php的变量规则：&#39;^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$&#39;。这里的\80-\xff是ASCII的扩展码，">
+<meta name="description" content="0x01 php变量解析漏洞起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(RoarCTF 2019) Easy Calc">
 <meta property="og:url" content="https://123-prog.github.io/2021/03/10/RoarCTF-2019-Easy-Calc/index.html">
 <meta property="og:site_name" content="nappingCat&#39;s Blog">
-<meta property="og:description" content="0x01 php变量解析漏洞起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作 php的变量规则：&#39;^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$&#39;。这里的\80-\xff是ASCII的扩展码，">
+<meta property="og:description" content="0x01 php变量解析漏洞起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-10T06:46:42.000Z">
-<meta property="article:modified_time" content="2021-03-10T07:26:44.505Z">
+<meta property="article:modified_time" content="2021-03-10T07:35:19.784Z">
 <meta property="article:author" content="Guangyue">
 <meta property="article:tag" content="php变量解析漏洞，简单绕waf">
 <meta name="twitter:card" content="summary">
@@ -242,7 +242,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2021-03-10 14:46:42 / Modified: 15:26:44" itemprop="dateCreated datePublished" datetime="2021-03-10T14:46:42+08:00">2021-03-10</time>
+      <time title="Created: 2021-03-10 14:46:42 / Modified: 15:35:19" itemprop="dateCreated datePublished" datetime="2021-03-10T14:46:42+08:00">2021-03-10</time>
     </span>
 
   
@@ -256,6 +256,8 @@
     
     <div class="post-body" itemprop="articleBody">
         <h3 id="0x01-php变量解析漏洞"><a href="#0x01-php变量解析漏洞" class="headerlink" title="0x01 php变量解析漏洞"></a>0x01 php变量解析漏洞</h3><p>起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作</p>
+<a id="more"></a>
+
 <p>php的变量规则：<code>&#39;^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$&#39;</code>。这里的\80-\xff是ASCII的扩展码，其中包括一些数学符号，音符等等，这里既然这些符号是符合php变量规则的，我们就不必测试这些扩展码了。</p>
 <p>在php中<code>parse_str()</code>函数和 $_GET，$_POST 在 PHP 中填充变量相似，也使用了同样的机制，所以测试代码中使用这个函数来代替</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">&#x2F;*</span><br><span class="line">parse_str会对指定的字符串进行解析并转化为有效的变量名，有些非法的变量名就会进行替换，</span><br><span class="line">比如替换成下划线，或者之间删去，这个程序测试哪些字符会被替换成空或者下划线</span><br><span class="line">*&#x2F;</span><br><span class="line">$test_list &#x3D; [&quot;&#123;&#125;test_val&quot;,&quot;test&#123;&#125;_val&quot;,&quot;test_val&#123;&#125;&quot;];</span><br><span class="line">foreach($test_list as $key&#x3D;&gt;$val)</span><br><span class="line">&#123;</span><br><span class="line">    for($i&#x3D;0;$i&lt;127;$i++)</span><br><span class="line">    &#123;</span><br><span class="line">        $new_val &#x3D; str_replace(&quot;&#123;&#125;&quot;,chr($i),$val);</span><br><span class="line">        parse_str($new_val,$output);</span><br><span class="line">        if(isset($output[&#39;test_val&#39;]))</span><br><span class="line">        &#123;</span><br><span class="line">            echo $i.&quot;:&quot;.chr($i).&quot; &#x3D;&gt;&quot;.&quot;删除&quot;.&quot;\n&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        if(isset($output[&#39;_test_val&#39;])||isset($output[&#39;test__val&#39;])||isset($output[&#39;test_val_&#39;]))</span><br><span class="line">        &#123;</span><br><span class="line">            echo $i.&quot;:&quot;.chr($i).&quot; &#x3D;&gt;&quot;.&quot;_\n&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &quot;\n&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
