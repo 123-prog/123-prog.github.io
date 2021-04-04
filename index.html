@@ -249,7 +249,9 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <h3 id="0x01-第一关sql注入"><a href="#0x01-第一关sql注入" class="headerlink" title="0x01 第一关sql注入"></a>0x01 第一关sql注入</h3>
+              <h3 id="0x01-第一关sql注入"><a href="#0x01-第一关sql注入" class="headerlink" title="0x01 第一关sql注入"></a>0x01 第一关sql注入</h3><p>没有查询的回显，只有一个<code>Only the admin can get the right page</code>提示，应该是需要以admin身份登录，所以需要注入获得密码</p>
+<p>尝试报错， 提交<code>username=admin&amp;password=1&#39;</code>返回<code>500 Internal Server Error</code></p>
+<p>提交<code>username=admin&amp;password=1#&#39;</code>回显正常，证明sql语句报错会直接返回<code>500 Internal Server Error</code></p>
           
       
     </div>
