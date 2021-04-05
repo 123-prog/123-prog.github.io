@@ -187,7 +187,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/http-smuggling/" style="font-size: 10px;">http smuggling</a> <a href="/tags/http-smugglings/" style="font-size: 10px;">http smugglings</a> <a href="/tags/http%E8%AF%B7%E6%B1%82%E5%A4%B4/" style="font-size: 10px;">http请求头</a> <a href="/tags/java-web%EF%BC%8Csqli/" style="font-size: 10px;">java web，sqli</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 15px;">php代码审计</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">php代码审计 反序列化漏洞</a> <a href="/tags/sqli/" style="font-size: 15px;">sqli</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 20px;">其他</a>
+                        <a href="/tags/SSRF-sqli/" style="font-size: 10px;">SSRF,sqli</a> <a href="/tags/http-smuggling/" style="font-size: 10px;">http smuggling</a> <a href="/tags/http-smugglings/" style="font-size: 10px;">http smugglings</a> <a href="/tags/http%E8%AF%B7%E6%B1%82%E5%A4%B4/" style="font-size: 10px;">http请求头</a> <a href="/tags/java-web%EF%BC%8Csqli/" style="font-size: 10px;">java web，sqli</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 15px;">php代码审计</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">php代码审计 反序列化漏洞</a> <a href="/tags/sqli/" style="font-size: 15px;">sqli</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 20px;">其他</a>
                     </div>
                 </section>
                 
@@ -247,6 +247,72 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-安洵杯-2019-easy-serialize-php" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/" class="article-date">
+      <time datetime="2021-01-24T03:31:42.000Z" itemprop="datePublished">2021-01-24</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/">安洵杯 2019 easy_serialize_php</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h3 id="0x01-关于反序列化漏洞中的字符逃逸"><a href="#0x01-关于反序列化漏洞中的字符逃逸" class="headerlink" title="0x01 关于反序列化漏洞中的字符逃逸"></a><strong>0x01 关于反序列化漏洞中的字符逃逸</strong></h3><p>有两种，一种是经过字符串替换导致序列化的字符串变长，还有一种是经过字符串替代后序列化字符串变短，两种都是因为在序列化后，对序列化的字符串进行了过滤，对其中的敏感字符进行替代，原本是对用户的输入进行过滤，现在反倒出现了可以利用的机会</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" rel="tag">php代码审计 反序列化漏洞</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a   href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/#more">查看更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
   
     <article id="post-BJDCTF2020-Easy-MD5" class="article article-type-post" itemscope itemprop="blogPost">
   
