@@ -187,7 +187,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/DASCTF/" style="font-size: 10px;">DASCTF</a> <a href="/tags/SSRF-sqli/" style="font-size: 10px;">SSRF,sqli</a> <a href="/tags/http-smuggling/" style="font-size: 10px;">http smuggling</a> <a href="/tags/http-smugglings/" style="font-size: 10px;">http smugglings</a> <a href="/tags/http%E8%AF%B7%E6%B1%82%E5%A4%B4/" style="font-size: 10px;">http请求头</a> <a href="/tags/java-web%EF%BC%8Csqli/" style="font-size: 10px;">java web，sqli</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 15px;">php代码审计</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">php代码审计 反序列化漏洞</a> <a href="/tags/sqli/" style="font-size: 15px;">sqli</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 20px;">其他</a>
+                        <a href="/tags/DASCTF/" style="font-size: 10px;">DASCTF</a> <a href="/tags/SSRF/" style="font-size: 10px;">SSRF</a> <a href="/tags/SSRF-sqli/" style="font-size: 10px;">SSRF,sqli</a> <a href="/tags/http-smuggling/" style="font-size: 10px;">http smuggling</a> <a href="/tags/http-smugglings/" style="font-size: 10px;">http smugglings</a> <a href="/tags/http%E8%AF%B7%E6%B1%82%E5%A4%B4/" style="font-size: 10px;">http请求头</a> <a href="/tags/java-web%EF%BC%8Csqli/" style="font-size: 10px;">java web，sqli</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" style="font-size: 15px;">php代码审计</a> <a href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">php代码审计 反序列化漏洞</a> <a href="/tags/sqli/" style="font-size: 15px;">sqli</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 20px;">其他</a>
                     </div>
                 </section>
                 
@@ -247,6 +247,76 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-SSRF之gopher协议利用" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/" class="article-date">
+      <time datetime="2021-04-27T04:13:57.000Z" itemprop="datePublished">2021-04-27</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h1 id="SSRF之gopher协议的利用"><a href="#SSRF之gopher协议的利用" class="headerlink" title="SSRF之gopher协议的利用"></a>SSRF之gopher协议的利用</h1><h2 id="gopher协议"><a href="#gopher协议" class="headerlink" title="gopher协议"></a>gopher协议</h2><p>格式：</p>
+<p><code>gopher://&lt;host&gt;:&lt;port&gt;/&lt;gopher-path&gt;_后接TCP数据流</code></p>
+<p>一个下划线可以替换成任意字符，但必须有不然数据流的第一个字符会被吞掉</p>
+<p>大概使用如下</p>
+<p>开一个在1234端口的监听</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF/" rel="tag">SSRF</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a   href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/#more">查看更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
   
     <article id="post-DASCTF-三月赛-web题复现" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -828,72 +898,6 @@
       
         <p class="article-more-link">
           <a   href="/2021/02/08/HGAME-week1-web%E9%83%A8%E5%88%86/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-极客大挑战-2019-Http" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/" class="article-date">
-      <time datetime="2021-02-08T12:06:49.000Z" itemprop="datePublished">2021-02-08</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01-源码发现Secret-php"><a href="#0x01-源码发现Secret-php" class="headerlink" title="0x01 源码发现Secret.php"></a>0x01 源码发现Secret.php</h3><p><img src="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/Snipaste_2021-02-08_20-09-38.png"></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http%E8%AF%B7%E6%B1%82%E5%A4%B4/" rel="tag">http请求头</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/#more">查看更多 >></a>
         </p>
       
       <div class="clearfix"></div>
