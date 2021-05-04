@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_12-17-25.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_12-18-11.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_12-18-20.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Blog/blog/source_posts/SSRF之gopher协议利用/Snipaste_2021-04-27_14-51-26.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_14-51-26.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_15-05-12.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_15-15-47.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_15-22-36.png">
@@ -37,8 +37,8 @@
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-05-04_16-45-15.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-05-04_18-06-00.png">
 <meta property="article:published_time" content="2021-04-27T04:13:57.000Z">
-<meta property="article:modified_time" content="2021-05-04T15:19:49.640Z">
-<meta property="article:author" content="Guangyue">
+<meta property="article:modified_time" content="2021-05-04T15:30:40.088Z">
+<meta property="article:author" content="nappingCat">
 <meta property="article:tag" content="SSRF">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_12-17-25.png">
@@ -93,7 +93,7 @@
             
         </a>
         <hgroup>
-          <h1 class="header-author"><a href="/"></a></h1>
+          <h1 class="header-author"><a href="/">nappingCat</a></h1>
         </hgroup>
         
         
@@ -230,7 +230,7 @@
       <nav id="mobile-nav">
       <div class="overlay">
           <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">nappingCat</a></h1>
       </div>
     <div class="intrude-less">
         <header id="header" class="inner">
@@ -240,7 +240,7 @@
                 
             </a>
             <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+              <h1 class="header-author"><a href="/" title="回到主页">nappingCat</a></h1>
             </hgroup>
             
             <nav class="header-menu">
@@ -328,7 +328,7 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="string">&quot;*****************hello_world*********************&quot;</span>;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>在kali虚拟机环境下进行实验，虚拟机ip:192.168.245.129</p>
 <p>在浏览器请求get.php的请求包</p>
-<p><img src="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Blog\blog\source_posts\SSRF之gopher协议利用\Snipaste_2021-04-27_14-51-26.png"></p>
+<p><img src="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/Snipaste_2021-04-27_14-51-26.png"></p>
 <p>根据这个请求包，构造http数据包，Host头是虚拟机ip，本地访问，在SSRF中，通常都是伪造本地访问绕过一些限制</p>
 <p>对数据进行一定编码后得到gopher协议用的http数据包，注意指定gopher协议端口号80，为http服务默认监听端口</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher:&#x2F;&#x2F;192.168.245.129:80&#x2F;_GET%20&#x2F;get.php%20HTTP&#x2F;1.1%0d%0aHost:%20192.168.245.129%0d%0a</span><br></pre></td></tr></table></figure>
@@ -432,12 +432,12 @@
     
     <div class="copyright">
         <p><span>本文标题:</span><a  href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a></p>
-        <p><span>文章作者:</span><a  href="/" title="访问  的个人博客"></a></p>
+        <p><span>文章作者:</span><a  href="/" title="访问 nappingCat 的个人博客">nappingCat</a></p>
         <p><span>发布时间:</span>2021年04月27日 - 12时13分</p>
-        <p><span>最后更新:</span>2021年05月04日 - 23时19分</p>
+        <p><span>最后更新:</span>2021年05月04日 - 23时30分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/" title="SSRF之gopher协议利用">https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/　　作者: " title=""></span>
+            <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/　　作者: nappingCat" title=""></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -568,7 +568,7 @@
     <div class="outer">
         <div id="footer-info">
             <div class="footer-left">
-                &copy; 2021 Guangyue
+                &copy; 2021 nappingCat
             </div>
             <div class="footer-right">
                 <a href="http://hexo.io/" target="_blank">Hexo &nbsp;&nbsp;</a><a href="https://github.com/maochunguang" target="_blank">Blog</a> by tommy
