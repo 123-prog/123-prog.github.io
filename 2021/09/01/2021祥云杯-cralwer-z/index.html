@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"123-prog.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="0x01给了源码，正常注册，登录后进入路由&#x2F;user &#x2F;profile用于展示和更改User信息，可以更改User.bucket，但这里是初步更改 1234567await User.update(&amp;#123;            affiliation,            age,            personalBucket: bucket        &amp;#125;, &amp;#123">
+  <meta name="description" content="0x01给了源码，正常注册，登录后进入路由&#x2F;user &#x2F;profile用于展示和更改User信息，可以更改User.bucket，但这里是初步更改">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(2021祥云杯)cralwer_z">
 <meta property="og:url" content="https://123-prog.github.io/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/index.html">
 <meta property="og:site_name" content="nappingCat&#39;s Blog">
-<meta property="og:description" content="0x01给了源码，正常注册，登录后进入路由&#x2F;user &#x2F;profile用于展示和更改User信息，可以更改User.bucket，但这里是初步更改 1234567await User.update(&amp;#123;            affiliation,            age,            personalBucket: bucket        &amp;#125;, &amp;#123">
+<meta property="og:description" content="0x01给了源码，正常注册，登录后进入路由&#x2F;user &#x2F;profile用于展示和更改User信息，可以更改User.bucket，但这里是初步更改">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-09-01T14:24:37.000Z">
-<meta property="article:modified_time" content="2021-09-01T15:15:44.567Z">
+<meta property="article:modified_time" content="2021-09-09T05:16:53.469Z">
 <meta property="article:author" content="nappingCat">
 <meta property="article:tag" content="js代码审计">
 <meta property="article:tag" content="zombie RCE">
@@ -184,10 +184,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-09-01 22:24:37 / Modified: 23:15:44" itemprop="dateCreated datePublished" datetime="2021-09-01T22:24:37+08:00">2021-09-01</time>
+              <time title="Created: 2021-09-01 22:24:37" itemprop="dateCreated datePublished" datetime="2021-09-01T22:24:37+08:00">2021-09-01</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-09 13:16:53" itemprop="dateModified" datetime="2021-09-09T13:16:53+08:00">2021-09-09</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -211,6 +217,8 @@
       
         <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>给了源码，正常注册，登录后进入路由<code>/user</code></p>
 <p><code>/profile</code>用于展示和更改User信息，可以更改<code>User.bucket</code>，但这里是初步更改</p>
+<a id="more"></a>
+
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> User.update(&#123;</span><br><span class="line">            affiliation,</span><br><span class="line">            age,</span><br><span class="line">            personalBucket: bucket</span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            where: &#123; <span class="attr">userId</span>: req.session.userId &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
 <p>这里并没有直接更改User的bucket信息，而是先存放在<code>personalBucket</code>中，后面更改的时候还要验证一下token</p>
 <p>这里正常更改的话会有过滤，必须符合正则匹配</p>
@@ -258,7 +266,10 @@
     <a href="/2021/08/18/GKCTF-2021-hackme/" rel="prev" title="(GKCTF 2021)hackme">
       <i class="fa fa-chevron-left"></i> (GKCTF 2021)hackme
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/" rel="next" title="(羊城杯 2020)A Piece Of Java">
+      (羊城杯 2020)A Piece Of Java <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -331,7 +342,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -344,7 +355,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-count">52</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

