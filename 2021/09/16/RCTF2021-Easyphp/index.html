@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"123-prog.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="0x01 题目给了源码和nginx配置文件，主要是配置文件，看一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(RCTF2021) Easyphp">
+<meta property="og:url" content="https://123-prog.github.io/2021/09/16/RCTF2021-Easyphp/index.html">
+<meta property="og:site_name" content="nappingCat&#39;s Blog">
+<meta property="og:description" content="0x01 题目给了源码和nginx配置文件，主要是配置文件，看一下">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/09/16/RCTF2021-Easyphp/Snipaste_2021-09-16_23-03-11.png">
+<meta property="article:published_time" content="2021-09-16T14:04:12.000Z">
+<meta property="article:modified_time" content="2021-09-16T15:04:05.425Z">
+<meta property="article:author" content="nappingCat">
+<meta property="article:tag" content="nginx路径解析绕过">
+<meta property="article:tag" content="flight框架代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/09/16/RCTF2021-Easyphp/Snipaste_2021-09-16_23-03-11.png">
+
+<link rel="canonical" href="https://123-prog.github.io/2021/09/16/RCTF2021-Easyphp/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>(RCTF2021) Easyphp | nappingCat's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">nappingCat's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://123-prog.github.io/2021/09/16/RCTF2021-Easyphp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="nappingCat">
+      <meta itemprop="description" content="2571374157@qq.com">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nappingCat's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          (RCTF2021) Easyphp
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-16 22:04:12 / Modified: 23:04:05" itemprop="dateCreated datePublished" datetime="2021-09-16T22:04:12+08:00">2021-09-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">web刷题记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="0x01-题目"><a href="#0x01-题目" class="headerlink" title="0x01 题目"></a>0x01 题目</h3><p>给了源码和nginx配置文件，主要是配置文件，看一下</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    listen  [::]:80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line"></span><br><span class="line">    #access_log  &#x2F;var&#x2F;log&#x2F;nginx&#x2F;host.access.log  main;</span><br><span class="line">    root   &#x2F;var&#x2F;www&#x2F;html;</span><br><span class="line">    location &#x2F;admin &#123;</span><br><span class="line">        allow 127.0.0.1;</span><br><span class="line">        deny all;</span><br><span class="line">    &#125;</span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">        index  index.php;</span><br><span class="line">        try_files $uri @phpfpm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    #error_page  404              &#x2F;404.html;</span><br><span class="line"></span><br><span class="line">    # redirect server error pages to the static page &#x2F;50x.html</span><br><span class="line">    #</span><br><span class="line">    error_page   500 502 503 504  &#x2F;50x.html;</span><br><span class="line">    location &#x3D; &#x2F;50x.html &#123;</span><br><span class="line">        root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # proxy the PHP scripts to Apache listening on 127.0.0.1:80</span><br><span class="line">    #</span><br><span class="line">    #location ~ \.php$ &#123;</span><br><span class="line">    #    proxy_pass   http:&#x2F;&#x2F;127.0.0.1;</span><br><span class="line">    #&#125;</span><br><span class="line"></span><br><span class="line">    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span><br><span class="line">    #</span><br><span class="line">    location @phpfpm &#123;</span><br><span class="line">        include        fastcgi_params;</span><br><span class="line">        fastcgi_split_path_info ^(.+?\.php)(&#x2F;.*)$;</span><br><span class="line">        fastcgi_pass   php:9000;</span><br><span class="line">        fastcgi_index  index.php;</span><br><span class="line">        fastcgi_param  SCRIPT_FILENAME  $document_root&#x2F;index.php;</span><br><span class="line">        fastcgi_param  REQUEST_URI  $uri;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # deny access to .htaccess files, if Apache&#39;s document root</span><br><span class="line">    # concurs with nginx&#39;s one</span><br><span class="line">    #</span><br><span class="line">    #location ~ &#x2F;\.ht &#123;</span><br><span class="line">    #    deny  all;</span><br><span class="line">    #&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意几个关键点：</p>
+<blockquote>
+<p>匹配路径<code>/admin</code>会被waf掉，只允许本地访问</p>
+<p>传递给fastcgi的参数，<code>SCRIPT_FILENAME</code>写死的，为index.php，就是说，我们访问的任何路径，fastcgi解析的永远都是index.php，index.php中有各种路由负责实现各种功能</p>
+<p><code>REQUEST_URI</code> 设为 $uri，$uri为nginx配置的内置参数，为访问路径，不包含query部分，比如路径<code>http://example.com/test/doc?a=1</code>的$uri就是<code>/test/doc</code>，而且这个参数也会对应php代码中的<code>$_SERVER[&#39;REQUEST_URI&#39;]</code></p>
+</blockquote>
+<h3 id="0x02-审计"><a href="#0x02-审计" class="headerlink" title="0x02 审计"></a>0x02 审计</h3><h4 id="request-gt-url："><a href="#request-gt-url：" class="headerlink" title="$request-&gt;url："></a>$request-&gt;url：</h4><p>目标是访问到<code>/admin</code>，路由下有任意文件读取</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$app</span>-&gt;route(<span class="string">&#x27;/admin&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$app</span>;</span><br><span class="line">    <span class="variable">$request</span> = <span class="variable">$app</span>-&gt;request();</span><br><span class="line">    <span class="variable">$app</span>-&gt;render(<span class="string">&quot;admin&quot;</span>,[<span class="string">&quot;data&quot;</span>=&gt;<span class="string">&quot;./&quot;</span>.<span class="variable">$request</span>-&gt;query-&gt;data],<span class="string">&quot;body_content&quot;</span>);</span><br><span class="line">    <span class="variable">$app</span>-&gt;render(<span class="string">&quot;template&quot;</span>,[]);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>但有很多限制，首先第一个就是nginx配置中的限制，如果我们直接访问<code>/admin</code>，会直接报403</p>
+<p>这里就有一个思路，flight的路由解析如果有漏洞的话，是否可以访问某个不是<code>/admin</code>开头的路径，却可以被解析到<code>/admin</code>的路径，这样的话nginx的限制就可以解除了</p>
+<p>还有一个限制</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$app</span>-&gt;route(<span class="string">&#x27;/*&#x27;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$app</span>;</span><br><span class="line">    <span class="variable">$request</span> = <span class="variable">$app</span>-&gt;request();</span><br><span class="line">    <span class="variable">$app</span>-&gt;render(<span class="string">&quot;head&quot;</span>,[],<span class="string">&quot;head_content&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(stristr(<span class="variable">$request</span>-&gt;url,<span class="string">&quot;login&quot;</span>)!==<span class="literal">FALSE</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&quot;user&quot;</span>])&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$app</span>-&gt;redirect(<span class="string">&quot;/login&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这是一个过滤，验证你是否登陆过，但注意到这个if判断，只要<code>$request-&gt;url</code>之中包含<code>login</code>，也就可以绕过</p>
+<p>阅读源码，<code>$request-&gt;url</code>来自<code>$_SERVER[&#39;REQUEST_URI&#39;]</code>，初始化的时候会进一步处理，处理为</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;base != <span class="string">&#x27;/&#x27;</span> &amp;&amp; strlen(<span class="keyword">$this</span>-&gt;base) &gt; <span class="number">0</span> &amp;&amp; strpos(<span class="keyword">$this</span>-&gt;url, <span class="keyword">$this</span>-&gt;base) === <span class="number">0</span>) &#123;</span><br><span class="line">           <span class="keyword">$this</span>-&gt;url = substr(<span class="keyword">$this</span>-&gt;url, strlen(<span class="keyword">$this</span>-&gt;base));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，如果访问路径为<code>/a/aa/aaa</code>，经过处理，这里直接截取了<code>base</code>，就会变成<code>/aaa</code>，即对应<code>$request-&gt;url</code>为<code>/aaa</code>，可以在本地环境中得到验证</p>
+<h4 id="route："><a href="#route：" class="headerlink" title="route："></a>route：</h4><p>下面审计以下flight的路由匹配规则</p>
+<p>路由函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">route</span>(<span class="params">Request <span class="variable">$request</span></span>) </span>&#123;</span><br><span class="line">     <span class="variable">$url_decoded</span> = urldecode( <span class="variable">$request</span>-&gt;url );</span><br><span class="line">     <span class="keyword">while</span> (<span class="variable">$route</span> = <span class="keyword">$this</span>-&gt;current()) &#123;</span><br><span class="line">         <span class="keyword">if</span> (<span class="variable">$route</span> !== <span class="literal">false</span> &amp;&amp; <span class="variable">$route</span>-&gt;matchMethod(<span class="variable">$request</span>-&gt;method) &amp;&amp; <span class="variable">$route</span>-&gt;matchUrl(<span class="variable">$url_decoded</span>, <span class="keyword">$this</span>-&gt;case_sensitive)) &#123;</span><br><span class="line">             <span class="keyword">return</span> <span class="variable">$route</span>;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">$this</span>-&gt;next();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>首先会对<code>$request-&gt;url</code>进行一次url解码，匹配url的函数为<code>matchUrl</code>，跟进这个函数</p>
+<p>发现匹配规则</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (preg_match(<span class="string">&#x27;#^&#x27;</span>.<span class="variable">$regex</span>.<span class="string">&#x27;(?:\?.*)?$#&#x27;</span>.((<span class="variable">$case_sensitive</span>) ? <span class="string">&#x27;&#x27;</span> : <span class="string">&#x27;i&#x27;</span>), <span class="variable">$url</span>, <span class="variable">$matches</span>)) &#123;</span><br><span class="line">            <span class="keyword">foreach</span> (<span class="variable">$ids</span> <span class="keyword">as</span> <span class="variable">$k</span> =&gt; <span class="variable">$v</span>) &#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;params[<span class="variable">$k</span>] = (array_key_exists(<span class="variable">$k</span>, <span class="variable">$matches</span>)) ? urldecode(<span class="variable">$matches</span>[<span class="variable">$k</span>]) : <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">$this</span>-&gt;regex = <span class="variable">$regex</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>这里传入的参数为$url，这个参数是一次url解码之后的<code>$request-&gt;url</code>，匹配的话，只要这个以<code>/admin</code>开头，就匹配成功，就会调用对应的回调函数</p>
+<p>重点来了，<code>$request-&gt;url</code>在前面分析过，在初始化的时候会经过一个截取，那么如果我们访问<code>/aaa/admin</code>，<code>$request-&gt;url</code>对应的是<code>/admin</code>，flight的路由会调用<code>/admin</code>对应的回调函数，而且<code>/aaa/admin</code>这个路径也不会匹配nginx配置的waf，成功绕过第一个限制</p>
+<p>现在我们访问<code>/aaa/admin</code>就可以到admin路由下了，但是因为没有登录，会跳转到login处</p>
+<h4 id="login："><a href="#login：" class="headerlink" title="login："></a>login：</h4><p>前面也分析了，只要<code>$request-&gt;url</code>包含<code>login</code>第二个问题也解决了</p>
+<p><strong>路由拿到<code>$request-&gt;url</code>参数后的正则匹配是允许后面带有<code>query</code></strong></p>
+<p>虽然我们由于nginx的配置导致<code>$request-&gt;url</code>不会包含query，但如果我们传入路径<code>/aaa/admin%3flogin=1</code>，由于是url编码，服务器解析路径的时候把这一整个都当作路径，而不会认为后面login是参数，所以此时的<code>$request-&gt;url</code>为<code>/admin?login=1</code>，路由匹配可以通过，也达到了<code>$request-&gt;url</code>包含<code>login</code>绕过登录的要求</p>
+<p>所以最后的payload为</p>
+<p><code>/aaa/admin%3flogin=1&amp;data=..%252F..%252F..%252F..%252F..%252Fflag</code></p>
+<p>注意data参数中包含的<code>/</code>需要经过两次url编码，否则，<code>$request-&gt;url</code>截取后会变成<code>/flag</code>，主要是保证/admin后没有/</p>
+<p><img src="/2021/09/16/RCTF2021-Easyphp/Snipaste_2021-09-16_23-03-11.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx%E8%B7%AF%E5%BE%84%E8%A7%A3%E6%9E%90%E7%BB%95%E8%BF%87/" rel="tag"># nginx路径解析绕过</a>
+              <a href="/tags/flight%E6%A1%86%E6%9E%B6%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># flight框架代码审计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/" rel="prev" title="(羊城杯 2020)A Piece Of Java">
+      <i class="fa fa-chevron-left"></i> (羊城杯 2020)A Piece Of Java
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/17/RCTF2021-VerySafe/" rel="next" title="(RCTF2021)VerySafe">
+      (RCTF2021)VerySafe <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">0x01 题目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-%E5%AE%A1%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">0x02 审计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#request-gt-url%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">$request-&gt;url：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#route%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">route：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#login%EF%BC%9A"><span class="nav-number">2.3.</span> <span class="nav-text">login：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">nappingCat</p>
+  <div class="site-description" itemprop="description">2571374157@qq.com</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nappingCat</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
