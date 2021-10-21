@@ -9,15 +9,15 @@
         <meta name="keywords" content="disable_functions绕过" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="0x01 结合SSRF攻击内网脆弱服务常见的内网可尝试攻击的服务，php-fpm，redis，mysql或者其他脆弱的web应用 1.攻击php-fpmpayload生成打php-fpm，没什么好说的，通常的情况是，在拿到某个php web应用的shell时，发现存在disable_functions限制了命令的执行，这时读取服务，如果发现用的是php-fpm，那么可以考虑打php-fpm。 打p">
+    <meta name="description" content="0x01 结合SSRF攻击内网脆弱服务常见的内网可尝试攻击的服务，php-fpm，redis，mysql或者其他脆弱的web应用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="花式绕disable_functons">
 <meta property="og:url" content="https://123-prog.github.io/2021/10/09/%E8%8A%B1%E5%BC%8F%E7%BB%95disable-functons/index.html">
 <meta property="og:site_name" content="npC4t&#39;s Blog">
-<meta property="og:description" content="0x01 结合SSRF攻击内网脆弱服务常见的内网可尝试攻击的服务，php-fpm，redis，mysql或者其他脆弱的web应用 1.攻击php-fpmpayload生成打php-fpm，没什么好说的，通常的情况是，在拿到某个php web应用的shell时，发现存在disable_functions限制了命令的执行，这时读取服务，如果发现用的是php-fpm，那么可以考虑打php-fpm。 打p">
+<meta property="og:description" content="0x01 结合SSRF攻击内网脆弱服务常见的内网可尝试攻击的服务，php-fpm，redis，mysql或者其他脆弱的web应用">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-09T11:08:52.000Z">
-<meta property="article:modified_time" content="2021-10-21T15:56:46.022Z">
+<meta property="article:modified_time" content="2021-10-21T15:59:26.890Z">
 <meta property="article:author" content="npC4t">
 <meta property="article:tag" content="disable_functions绕过">
 <meta name="twitter:card" content="summary">
@@ -442,6 +442,8 @@
         
         
             <h3 id="0x01-结合SSRF攻击内网脆弱服务"><a href="#0x01-结合SSRF攻击内网脆弱服务" class="headerlink" title="0x01 结合SSRF攻击内网脆弱服务"></a>0x01 结合SSRF攻击内网脆弱服务</h3><p>常见的内网可尝试攻击的服务，php-fpm，redis，mysql或者其他脆弱的web应用</p>
+<a id="more"></a>
+
 <h4 id="1-攻击php-fpm"><a href="#1-攻击php-fpm" class="headerlink" title="1.攻击php-fpm"></a>1.攻击php-fpm</h4><h5 id="payload生成"><a href="#payload生成" class="headerlink" title="payload生成"></a>payload生成</h5><p>打php-fpm，没什么好说的，通常的情况是，在拿到某个php web应用的shell时，发现存在disable_functions限制了命令的执行，这时读取服务，如果发现用的是php-fpm，那么可以考虑打php-fpm。</p>
 <p>打php-fpm除非它可以未授权访问，可以直接用socket连接发流量，否则都是需要利用一个SSRF漏洞，常见的curl，需要支持gopher协议，如果没有curl，那么可以考虑使用ftp恶意服务端转发数据（详见ftp协议在CTF中的应用</p>
 <p>恶意数据生成，理解一下Fastcgi协议即可，下面是一个php写的攻击数据生成（亲测好用</p>
